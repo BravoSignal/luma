@@ -1,0 +1,8 @@
+const {test}=require('node:test');const assert=require('node:assert/strict');const {once}=require('node:events');const {WebSocket}=require('ws');const {createBridge}=require('../app/bridge.cjs');
+test('authenticated local bridge transfers tracks, commands and disconnects',async()=>{
+ let track,status;const token='a'.repeat(48);const b=createBridge({token,port:0,onTrack:t=>track=t,onStatus:s=>status=s});await once(b.server,'listening');
+ const url=`ws://127.0.0.1:${b.server.address().port}/?token=${token}`;
+ const s=new WebSocket(url,{origin:'chrome-extension://'+'a'.repeat(32)});
+ try{await once(s,'open');s.send(JSON.stringify({type:'track',track:{title:'Test song',artist:'Artist',playing:true,duration:210,position:25}}));await new Promise(r=>setTimeout(r,30));assert.equal(track.title,'Test song');assert.equal(status.connected,true);const received=once(s,'message');b.command('next');assert.equal(JSON.parse(String((await received)[0])).action,'next');s.close();await once(s,'close');await new Promise(r=>setTimeout(r,20));assert.equal(track,null);assert.equal(status.connected,false);}finally{b.close();}
+});
+test('web pages and incorrect pairing codes are rejected',async()=>{const b=createBridge({token:'a'.repeat(48),port:0,onTrack:()=>{},onStatus:()=>{}});await once(b.server,'listening');try{for(const [origin,token] of [['https://evil.example','a'.repeat(48)],['chrome-extension://'+'b'.repeat(32),'b'.repeat(48)]]){const s=new WebSocket(`ws://127.0.0.1:${b.server.address().port}/?token=${token}`,{origin});const err=await new Promise(r=>s.on('error',r));assert.match(err.message,/403/);}}finally{b.close();}});
