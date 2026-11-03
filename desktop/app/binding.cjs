@@ -1,0 +1,9 @@
+const keys=require('./keymap.json');
+const aliases={ControlLeft:'Ctrl',ControlRight:'CtrlRight',AltLeft:'Alt',AltRight:'AltRight',ShiftLeft:'Shift',ShiftRight:'ShiftRight',MetaLeft:'Meta',MetaRight:'MetaRight',IntlBackslash:'Backslash'};
+function keyCode(code){const key=aliases[code]||code.replace(/^Key([A-Z])$/,'$1').replace(/^Digit([0-9])$/,'$1');return keys[key]??null;}
+function normalizeBinding(b){if(!b||typeof b.code!=='string'||keyCode(b.code)===null)return null;return{code:b.code,ctrl:b.ctrl===true,alt:b.alt===true,shift:b.shift===true,meta:b.meta===true};}
+function fromLegacy(key='F8'){return normalizeBinding({code:({AltRight:'AltRight',ShiftRight:'ShiftRight'})[key]||key})||normalizeBinding({code:'F8'});}
+const modifierCodes={ctrl:[keys.Ctrl,keys.CtrlRight],alt:[keys.Alt,keys.AltRight],shift:[keys.Shift,keys.ShiftRight],meta:[keys.Meta,keys.MetaRight]};
+function bindingHeld(binding,pressed){const b=normalizeBinding(binding);if(!b||!pressed.has(keyCode(b.code)))return false;return Object.entries(modifierCodes).every(([mod,codes])=>!b[mod]||codes.some(c=>pressed.has(c)));}
+function labelBinding(b){b=normalizeBinding(b)||fromLegacy();const alias={Space:'Leertaste',ControlLeft:'Strg links',ControlRight:'Strg rechts',AltLeft:'Alt links',AltRight:'Alt rechts',ShiftLeft:'Shift links',ShiftRight:'Shift rechts',MetaLeft:'⌘ links',MetaRight:'⌘ rechts',ArrowUp:'↑',ArrowDown:'↓',ArrowLeft:'←',ArrowRight:'→'};const base=alias[b.code]||b.code.replace(/^(Key|Digit)/,'');return[...(b.ctrl&&!b.code.startsWith('Control')?['Strg']:[]),...(b.alt&&!b.code.startsWith('Alt')?['Alt']:[]),...(b.shift&&!b.code.startsWith('Shift')?['Shift']:[]),...(b.meta&&!b.code.startsWith('Meta')?['⌘ / Win']:[]),base].join(' + ');}
+module.exports={keyCode,normalizeBinding,fromLegacy,bindingHeld,labelBinding};
