@@ -1,0 +1,5 @@
+const input=document.getElementById('token'),status=document.getElementById('status');let last=null;
+chrome.storage.local.get('token').then(s=>{input.value=s.token||'';});
+document.getElementById('form').onsubmit=async e=>{e.preventDefault();const token=input.value.trim();if(!/^[a-f0-9]{48}$/.test(token)){status.textContent='Bitte den vollständigen Kopplungscode aus Luma einfügen.';return;}await chrome.storage.local.set({token});status.textContent='Verbindung wird aufgebaut …';};
+async function check(){try{const s=await chrome.runtime.sendMessage({type:'status'});if(s.connected!==last){last=s.connected;status.classList.toggle('connected',s.connected);status.textContent=s.connected?'✓ Erfolgreich mit Luma verbunden. Du kannst dieses Fenster schließen und deine Musik starten.':input.value?'Luma noch nicht erreichbar. Öffne die Desktop-App und prüfe deinen Code.':'Füge deinen Kopplungscode ein.';}}catch{status.textContent='Erweiterung bitte neu laden.';}}
+setInterval(check,1500);check();
