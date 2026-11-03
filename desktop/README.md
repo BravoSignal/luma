@@ -1,4 +1,4 @@
-# Luma 1.4
+# Luma 1.4.1
 
 Ein anpassbares Musik-Widget für macOS und Windows. YouTube Music läuft weiter in Chrome, Edge oder Brave. Die System-Medienanbindung liefert verfügbare Titeldaten; die Browser-Erweiterung ergänzt die YouTube-Music-Steuerung.
 
@@ -11,7 +11,7 @@ Ein anpassbares Musik-Widget für macOS und Windows. YouTube Music läuft weiter
 - Kleine Ansicht wahlweise mit Titel oben und Buttons darunter oder Titel links und Buttons rechts; Schriftbild und Buchstabenabstand einstellbar.
 - Frei aufnehmbare Halte-Taste oder Tastenkombination.
 - Maus oder gehaltene Taste zeigen die kleine Ansicht. Taste plus Maus erweitert. Der Pfeilbutton kann unabhängig davon auf- und zuklappen. Ein Klick auf freie Fläche der kleinen Ansicht erweitert ebenfalls.
-- Temporäres Verschieben am Ziehgriff; der Pin speichert die Position für den jeweiligen Bildschirm.
+- Temporäres Verschieben auf jeder freien Fläche; der Pin speichert die Position für den jeweiligen Bildschirm.
 - X blendet das Widget aus und lässt die Musik weiterlaufen.
 - Play/Pause, vorheriger/nächster Titel, Zeitleiste, Shuffle, Wiederholung, Lautstärke, Daumen hoch/runter und Playlist-Dialog.
 - Die Daumen erscheinen im kleinen Widget, wenn ausreichend Platz vorhanden ist. In der großen Ansicht sind sie immer sichtbar.
@@ -32,6 +32,8 @@ Diese Vorabversion ist nicht mit einem Entwicklerzertifikat signiert oder bei Ap
 
 ## YouTube Music verbinden
 
+Die Erweiterung ist noch nicht im Chrome Web Store hochgeladen oder veröffentlicht. Bis dahin wird sie lokal nach der folgenden Anleitung geladen.
+
 1. In Luma links „Verbindung“ öffnen und den Erweiterungsordner vorbereiten.
 2. In Chrome die Adresse `chrome://extensions` öffnen. Für Edge und Brave entsprechend `edge://extensions` beziehungsweise `brave://extensions` verwenden.
 3. Entwicklermodus einschalten und „Entpackte Erweiterung laden“ wählen. Den Ordner auswählen, in dem `manifest.json` direkt liegt. Das ZIP vorher entpacken.
@@ -51,7 +53,7 @@ Unter „Aktivierung“ hat jeder verbundene Monitor einen eigenen Bereich. Eine
 
 Neben der Tastenbelegung auf „Ändern“ klicken und die gewünschte Taste oder Kombination aufnehmen. Einzelne Zusatztasten beim Aufnehmen drücken und loslassen. Unter macOS benötigt die globale Halte-Taste die Freigabe von Luma in „Datenschutz & Sicherheit → Bedienungshilfen“. Die Mauszone benötigt diese Freigabe nicht. Tasten werden beobachtet, nicht unterdrückt; sie können in anderen Apps weiterhin ihre normale Funktion auslösen. Fn selbst ist keine eigenständige Belegung.
 
-Am kleinen Ziehgriff im Widget lässt es sich vorübergehend verschieben. Beim nächsten Einblenden kehrt es zur Zone beziehungsweise zur gespeicherten Position zurück. Ein Klick auf den Pin merkt sich den neuen Ort. Ein erneuter Klick löst die feste Position wieder. Positionen werden pro Bildschirm gespeichert.
+Auf jeder freien Fläche lässt sich das Widget vorübergehend verschieben: Maustaste drücken und ziehen. Ein Klick ohne Ziehen erweitert die kleine Ansicht. Buttons und Songtitel behalten ihre eigene Funktion. Beim nächsten Einblenden kehrt es zur Zone beziehungsweise zur gespeicherten Position zurück. Ein Klick auf den Pin merkt sich den neuen Ort. Ein erneuter Klick löst die feste Position wieder. Positionen werden pro Bildschirm gespeichert.
 
 ## Aus dem Quellcode starten
 
