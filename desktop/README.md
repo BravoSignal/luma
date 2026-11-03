@@ -1,4 +1,4 @@
-# Luma 1.3
+# Luma 1.4
 
 Ein anpassbares Musik-Widget für macOS und Windows. YouTube Music läuft weiter in Chrome, Edge oder Brave. Die System-Medienanbindung liefert verfügbare Titeldaten; die Browser-Erweiterung ergänzt die YouTube-Music-Steuerung.
 
@@ -10,13 +10,16 @@ Ein anpassbares Musik-Widget für macOS und Windows. YouTube Music läuft weiter
 - Widget-Breite und -Höhe unabhängig von den Aktivierungszonen.
 - Kleine Ansicht wahlweise mit Titel oben und Buttons darunter oder Titel links und Buttons rechts; Schriftbild und Buchstabenabstand einstellbar.
 - Frei aufnehmbare Halte-Taste oder Tastenkombination.
-- Maus oder gehaltene Taste zeigen die kleine Ansicht. Taste plus Maus erweitert. Der Pfeilbutton kann unabhängig davon auf- und zuklappen.
+- Maus oder gehaltene Taste zeigen die kleine Ansicht. Taste plus Maus erweitert. Der Pfeilbutton kann unabhängig davon auf- und zuklappen. Ein Klick auf freie Fläche der kleinen Ansicht erweitert ebenfalls.
 - Temporäres Verschieben am Ziehgriff; der Pin speichert die Position für den jeweiligen Bildschirm.
 - X blendet das Widget aus und lässt die Musik weiterlaufen.
 - Play/Pause, vorheriger/nächster Titel, Zeitleiste, Shuffle, Wiederholung, Lautstärke, Daumen hoch/runter und Playlist-Dialog.
 - Die Daumen erscheinen im kleinen Widget, wenn ausreichend Platz vorhanden ist. In der großen Ansicht sind sie immer sichtbar.
 - Cover-Farben automatisch oder manuell. Großes Cover im Vordergrund der vollen Ansicht.
-- macOS: nur in der Menüleiste, mit sichtbarem „Luma“-Text und kurzer Einführung beim ersten Start.
+- macOS: nur in der Menüleiste, mit sichtbarem „Luma“-Text und kurzer Einführung mit gezeichnetem Pfeil zum echten Menüleistensymbol.
+- Klick auf den Songtitel holt den vorhandenen YouTube-Music-Tab nach vorne (Erweiterung erforderlich).
+- Optionaler Button „Als Nächstes“ zeigt bis zu 30 bereits im Browser geladene Folgetitel. Falls die Liste dort noch nicht geladen ist, zuerst in YouTube Music „Als Nächstes“ öffnen.
+- Größerer Play/Pause-Button und kleinerer Titel in der kompakten Ansicht.
 - Erweiterungslogo und Bestätigung nach erfolgreicher Kopplung auf beiden Seiten.
 
 ## Starten
