@@ -1,0 +1,8 @@
+node_modules/
+release*/
+native/windows/bin/
+native/windows/obj/
+native/mac/MediaRemoteAdapter.framework/
+.env
+.env.*
+.DS_Store
