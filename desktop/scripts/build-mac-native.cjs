@@ -1,0 +1,8 @@
+const fs=require('node:fs');const path=require('node:path');const {execFileSync}=require('node:child_process');
+if(process.platform!=='darwin')process.exit(0);
+const root=path.resolve(__dirname,'../native/mac'),out=path.join(root,'MediaRemoteAdapter.framework');fs.mkdirSync(out,{recursive:true});
+const sources=['adapter','private','utility'].flatMap(dir=>fs.readdirSync(path.join(root,'src',dir)).filter(x=>x.endsWith('.m')).map(x=>path.join(root,'src',dir,x)));
+execFileSync('clang',['-dynamiclib','-fobjc-arc','-fvisibility=default','-arch','arm64','-arch','x86_64','-mmacosx-version-min=11.0','-I'+path.join(root,'include'),'-I'+path.join(root,'src'),...sources,'-framework','Foundation','-framework','AppKit','-framework','UniformTypeIdentifiers','-install_name','@rpath/MediaRemoteAdapter.framework/MediaRemoteAdapter','-o',path.join(out,'MediaRemoteAdapter')],{stdio:'inherit'});
+fs.writeFileSync(path.join(out,'Info.plist'),'<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd"><plist version="1.0"><dict><key>CFBundleExecutable</key><string>MediaRemoteAdapter</string><key>CFBundleIdentifier</key><string>local.luma.MediaRemoteAdapter</string><key>CFBundlePackageType</key><string>FMWK</string><key>CFBundleVersion</key><string>1</string></dict></plist>');
+execFileSync('codesign',['--force','--sign','-',out],{stdio:'inherit'});
+console.log('Mac media adapter built.');
