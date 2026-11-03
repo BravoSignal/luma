@@ -14,3 +14,5 @@
 
 /* Free surfaces: click to expand, drag to move; media controls stay independent. */
 .music-card,.music-card *{-webkit-app-region:no-drag}.music-card{touch-action:none;cursor:grab;user-select:none}.music-card.dragging,.music-card.dragging *{cursor:grabbing!important}.music-card button,.music-card input{cursor:pointer}.compact .transport .play{width:44px;height:44px}.compact .transport .play svg{width:25px;height:25px}.compact.layout-stacked .transport{gap:14px;bottom:7px}.compact.layout-stacked.tight .transport{bottom:4px}.compact.layout-stacked.tight .transport .play{width:42px;height:42px}.compact .transport button:not(.play){width:26px;height:30px}.compact.layout-inline .track-info{padding-right:142px}.pin-widget svg{transform:none}.pin-widget.enabled svg{fill:rgba(var(--accent-rgb),.2)}
+
+.compact.layout-stacked.micro .track-row{top:30px}.compact.layout-stacked.micro .song{font-size:12.5px;line-height:16px}

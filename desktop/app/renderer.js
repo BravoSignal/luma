@@ -47,7 +47,7 @@ function updateSize(){
  const button=card.querySelector('.expand-button');button.innerHTML=icon(full?'up':'down');button.setAttribute('aria-expanded',String(full));button.setAttribute('aria-label',full?'Widget einklappen':'Widget erweitern');
  const base=overlayMode?geometry.height:(state.config.widgetHeight||108);
  const target=full?Math.max(370,base+240)+(queueOpen?180:0):base;
- card.classList.toggle('layout-stacked',state.config.compactLayout==='stacked');card.classList.toggle('layout-inline',state.config.compactLayout!=='stacked');card.classList.toggle('tight',base<116);card.classList.toggle('compact-likes',state.config.compactLayout==='stacked'?geometry.width>=340:geometry.width>=500);
+ card.classList.toggle('layout-stacked',state.config.compactLayout==='stacked');card.classList.toggle('layout-inline',state.config.compactLayout!=='stacked');card.classList.toggle('tight',base<116);card.classList.toggle('micro',base<104);card.classList.toggle('compact-likes',state.config.compactLayout==='stacked'?geometry.width>=340:geometry.width>=500);
  card.dataset.textStyle=state.config.textStyle;card.style.setProperty('--tracking',(state.config.letterSpacing??-.2)+'px');
  const pin=card.querySelector('.pin-widget');pin.classList.toggle('enabled',!!state.pinned);pin.title=state.pinned?'Position lösen':'Aktuelle Position merken';pin.setAttribute('aria-pressed',String(!!state.pinned));
  card.style.height=target+'px';
