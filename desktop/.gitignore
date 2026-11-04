@@ -6,3 +6,4 @@ native/mac/MediaRemoteAdapter.framework/
 .env
 .env.*
 .DS_Store
+native/mac/Luma.Desktop

@@ -1,6 +1,6 @@
 {
   "name": "luma-music-widget",
-  "version": "1.5.2",
+  "version": "1.6.1",
   "description": "Your music. One moment away.",
   "author": "Luma",
   "private": true,
@@ -9,11 +9,13 @@
     "start": "electron .",
     "test": "node --test test/*.test.cjs",
     "pack": "electron-builder --dir",
-    "dist:mac": "electron-builder --mac zip",
+    "dist:mac": "electron-builder --mac zip --arm64 --x64",
     "dist:win": "electron-builder --win nsis",
     "native:mac": "node scripts/build-mac-native.cjs",
     "test:ui": "electron scripts/qa.cjs",
-    "dist:win:zip": "electron-builder --win zip --x64 -c.win.signAndEditExecutable=false -c.npmRebuild=false"
+    "dist:win:zip": "electron-builder --win zip --x64 -c.npmRebuild=false",
+    "test:badge": "electron scripts/badge-qa.cjs",
+    "prepare:update": "node scripts/prepare-update.cjs"
   },
   "dependencies": {
     "ws": "^8.18.3",
@@ -49,7 +51,8 @@
           "filter": [
             "MediaRemoteAdapter.framework/**/*",
             "mediaremote-adapter.pl",
-            "LICENSE"
+            "LICENSE",
+            "Luma.Desktop"
           ]
         },
         {
@@ -74,12 +77,14 @@
           "from": "extension",
           "to": "extension"
         }
-      ]
+      ],
+      "signExecutable": false
     },
     "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
-      "createDesktopShortcut": true
+      "createDesktopShortcut": true,
+      "artifactName": "Luma-Setup-${version}.${ext}"
     },
     "icon": "app/icon.png"
   }

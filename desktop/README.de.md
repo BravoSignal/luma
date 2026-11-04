@@ -1,13 +1,15 @@
-# Luma 1.5.2
+# Luma 1.6.1 – lokale Vorabversion
 
-Ein anpassbares Musik-Widget für macOS und Windows. Die Musik bleibt in deinem bisherigen Browser.
+[English](README.md) · [Testanleitung](LOCAL-TESTING.md)
 
-[Downloads](https://github.com/BravoSignal/luma/releases/tag/v1.5.2) · [Installation und Updates auf Deutsch](../docs/SETUP.de.md) · [English documentation](README.md)
+Neu sind einzeln löschbare Bildschirmzonen mit Rückgängig und Testfunktion, vertikale Widgets, programmabhängige Profile, exakte Zahleneingaben ohne Einrasten, eine einstellbare Wiederöffnungsverzögerung nach X sowie Einstellungen zum Exportieren und Importieren.
 
-Englisch ist die Standardsprache. Unter **Customize → Interface language** kannst du Deutsch wählen. Die Browser-Erweiterung besitzt eine eigene Sprachauswahl.
+Der Mini-Player erscheint auf dem Mac direkt in der Menüleiste. Unter Windows verwendet er native Symbole im Infobereich der Taskleiste; Windows kann sie zunächst im Überlaufmenü verstecken. Beide Varianten lassen sich abschalten. Das normale Widget bleibt zusätzlich nutzbar.
 
-Version 1.5.2 entfernt „Up next“ und überarbeitet Like/Dislike sowie das Öffnen der Playlist-Auswahl. Dafür ist die enthaltene Browser-Erweiterung **1.3.1** erforderlich. Nach dem Aktualisieren müssen die Erweiterung und der YouTube-Music-Tab neu geladen werden.
+Bridge 1.4.0 zeigt oben rechts in YouTube Music einen grünen Haken, später einen kleinen grünen Punkt oder bei fehlender Verbindung ein rotes X. Ein Klick öffnet Hilfe zur Verbindung. Zusätzliche Browser-Berechtigungen sind nicht erforderlich.
 
-Die Desktop-App ist eine Vorabversion. Die Mac-App ist noch nicht signiert oder notarisiert. Apple Silicon wurde lokal getestet; die Pakete für Intel-Macs und Windows wurden gebaut, aber hier nicht auf diesen Geräten ausgeführt.
+Englisch bleibt die Standardsprache; Deutsch ist optional. Neue Software-Releases werden erst nach dem Nutzertest und der Freigabe veröffentlicht.
 
-Entwicklung, Build-Anweisungen und technische Grenzen stehen in der [englischen Dokumentation](README.md#development).
+## Desktop-Updates
+
+Unter **Updates** sucht Luma automatisch nach neuen Versionen und lädt sie herunter. **Neu starten und installieren** führt das Update aus. Automatische Updates sind abschaltbar; die manuelle Suche bleibt verfügbar. Einstellungen und Kopplung bleiben erhalten. Chrome aktualisiert die Store-Erweiterung separat.

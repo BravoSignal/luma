@@ -1,4 +1,4 @@
-# Luma 1.5.2
+# Luma 1.6.1
 
 Your music. One moment away.
 
@@ -10,11 +10,18 @@ A customizable desktop music widget for macOS and Windows. YouTube Music stays i
 
 ## What is new
 
-Version 1.5.2 removes Up next and fixes rating buttons and the playlist dialog. Ratings use the actual YouTube Music buttons and wait for confirmation. Playlist actions focus the browser and wait for a visible playlist picker.
+Version 1.6.1 is the first stable GitHub release. [Test guide](LOCAL-TESTING.md).
 
-
-- A dedicated Customize section with cards for colors, size and position, layout and typography, and playback behavior.
-- English menus, tooltips, notifications, onboarding, activation-zone editor, extension options and documentation. German remains optional.
+- Automatic desktop update checks and downloads, with an explicit restart to install. See **Updates** in settings. Update metadata is signed and packages are verified before installation.
+- Delete one screen zone, Undo deletion and test its outline independently.
+- Exact numeric zone positions; edge snapping only while using the pointer.
+- Vertical compact and expanded widgets, with per-screen orientation and size.
+- App profiles that follow the foreground app, with separate triggers, zones, pinned positions and layout. General settings remain the fallback.
+- Configurable continuous outside-zone time before reopening after X dismissal.
+- A larger connection confirmation and scroll-aware settings navigation.
+- Native menu-bar playback controls on macOS; native playback icons in the Windows taskbar's notification area. The mini player can be disabled and the regular widget remains available.
+- Preferences export/import without pairing codes. Display assignments are remapped on import; review zones on the new computer. App profiles can be reassigned when switching operating systems.
+- Bridge 1.4.0 adds a connection indicator and clickable diagnosis to YouTube Music: green check, quiet green dot, or a red X when disconnected. Browser permissions are unchanged.
 
 ## Widget controls
 
@@ -38,26 +45,19 @@ Record a single key or combination with **Change**. To use a modifier alone, pre
 
 **Mac:** unzip the package matching your chip, move Luma.app to Applications and open it. Use the Luma menu-bar item to reopen settings. There is no Dock icon. The first-run tour points to the menu-bar item and can be repeated later.
 
-**Windows:** extract the entire ZIP and launch Luma.exe. Keep all extracted files together. Use the system-tray icon to reopen settings.
+**Windows:** run the Setup installer for managed updates, or extract the entire portable ZIP and launch Luma.exe. Keep all extracted files together. Use the system-tray icon to reopen settings.
 
-This preview is not signed with a developer certificate or notarized by Apple. Windows and Intel packages are built here but have not been run on those devices.
+This build is not signed with a developer certificate or notarized by Apple. Windows and Intel packages are built here but have not been run on those devices.
 
 ## Connect YouTube Music
 
-The [Chrome Web Store listing](https://chromewebstore.google.com/detail/ahjjpjjmiaokgbmoojngfnbpmicidlcc) currently shows version 1.3.0. This release bundles 1.3.1 with the rating and playlist fixes; use the local setup below for that version.
+[Install Luma Bridge from the Chrome Web Store](https://chromewebstore.google.com/detail/ahjjpjjmiaokgbmoojngfnbpmicidlcc). The desktop app displays the widget; the browser extension connects it to YouTube Music. Both must be installed. The bridge setup page provides desktop downloads for people who discover Luma in the store first.
 
-1. Open **Connection** in Luma and choose **Prepare extension folder**.
-2. Open `chrome://extensions` in Chrome (`edge://extensions` or `brave://extensions` in the other browsers).
-3. Enable **Developer mode**, choose **Load unpacked**, and select the folder containing `manifest.json`. Extract ZIP downloads first.
-4. On a Mac, if the folder is hard to find, copy its path from Luma, press Cmd+Shift+G in the file picker, paste the path and confirm.
-5. Copy the pairing code from Luma and save it in the extension options. Click the extension toolbar icon to open those options.
-6. A green confirmation indicates a successful local connection. Reload YouTube Music and start a track.
+In **Connection**, open the store, then copy Luma's pairing code into the extension options. Look for the green confirmation and reload YouTube Music. The app stays in the macOS menu bar or Windows system tray. No extra Luma account or Google sign-in.
 
-To update a locally loaded extension, prepare the folder again from the latest desktop app, reload the extension on the browser’s extensions page, then reload YouTube Music.
+For preview versions newer than the store, expand **Local extension / developer setup** and prepare the extension folder. In your browser's extensions page, enable Developer mode and load that unpacked folder. For an existing local copy, prepare the folder again, reload the extension, then reload YouTube Music. Store-installed extensions use the browser's extension update mechanism.
 
-Unavailable extension features remain clickable and explain that pairing is required. **Add to playlist** opens the dialog in the YouTube Music tab; you choose the playlist there. Luma does not create playlists itself.
-
-The bridge listens only on `127.0.0.1:17384` and authenticates with a local pairing code. Pair each computer separately. No Luma account, Luma server, advertising or analytics. The extension only accesses YouTube Music and the local bridge. Song titles, artist names and your content are not translated.
+The bridge connects only to `127.0.0.1:17384` with your local pairing code. Pair each computer separately. Like/dislike and the playlist fixes require Bridge 1.3.1 or newer; this release bundles 1.4.0. **Add to playlist** opens the picker in your existing YouTube Music tab.
 
 ## Development
 
