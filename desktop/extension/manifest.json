@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Luma \u00b7 YouTube Music Bridge",
-  "version": "1.3.1",
+  "version": "1.4.0",
   "description": "Connect YouTube Music locally to your Luma desktop widget.",
   "minimum_chrome_version": "116",
   "permissions": [
@@ -31,6 +31,7 @@
         "https://music.youtube.com/*"
       ],
       "js": [
+        "connection-badge.js",
         "content.js"
       ],
       "run_at": "document_idle"

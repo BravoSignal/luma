@@ -11,12 +11,13 @@ async function connect(){
 chrome.runtime.onMessage.addListener((msg,sender,reply)=>{
  if(msg.type==='track'&&sender.tab&&sender.url?.startsWith('https://music.youtube.com/')){tabs.set(sender.tab.id,{track:msg.track,seen:Date.now()});choose();connect();}
  if(msg.type==='result'&&sender.tab?.id===activeTab&&socket?.readyState===WebSocket.OPEN)socket.send(JSON.stringify({type:'result',action:msg.action,ok:msg.ok}));
- if(msg.type==='status'){reply({connected:socket?.readyState===WebSocket.OPEN});connect();}
+ if(msg.type==='open-options'&&sender.url?.startsWith('https://music.youtube.com/')){chrome.runtime.openOptionsPage();reply({ok:true});}
+ if(msg.type==='status'){reply({connected:socket?.readyState===WebSocket.OPEN,paired:/^[a-f0-9]{48}$/.test(token)});connect();}
 });
 chrome.tabs.onRemoved.addListener(id=>{tabs.delete(id);choose();});
 chrome.tabs.onUpdated.addListener((id,info)=>{if(info.status==='loading'){tabs.delete(id);choose();}});
 chrome.storage.onChanged.addListener((changes,area)=>{if(area==='local'&&changes.token){clearTimeout(retry);const old=socket;socket=null;old?.close();connect();}});
 chrome.action.onClicked.addListener(()=>chrome.runtime.openOptionsPage());
-chrome.runtime.onInstalled.addListener(()=>{chrome.alarms.create('reconnect',{periodInMinutes:.5});connect();});
+chrome.runtime.onInstalled.addListener(details=>{if(details?.reason==='install')chrome.runtime.openOptionsPage();chrome.alarms.create('reconnect',{periodInMinutes:.5});connect();});
 chrome.runtime.onStartup.addListener(()=>{chrome.alarms.create('reconnect',{periodInMinutes:.5});connect();});
 chrome.alarms.onAlarm.addListener(()=>connect());connect();
