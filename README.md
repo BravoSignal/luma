@@ -4,60 +4,69 @@
 
 **Your music. One moment away.**
 
-Luma is a customizable desktop music widget for **macOS and Windows**. Move your pointer into a screen zone or hold a shortcut to bring your music controls into reach. Your music stays in YouTube Music in your existing browser.
+A customizable music widget for **macOS and Windows**. Move your pointer into a screen zone or hold a shortcut to reveal your music controls. YouTube Music stays in your existing browser.
 
-**[Download Luma 1.5.2](https://github.com/BravoSignal/luma/releases/tag/v1.5.2)** · [Installation & updates](docs/SETUP.md) · [Deutsch](docs/SETUP.de.md)
+**[Download Luma 1.6.1](https://github.com/BravoSignal/luma/releases/tag/v1.6.1)** · [Setup & updates](docs/SETUP.md) · [Deutsch](docs/SETUP.de.md)
 
-## Choose your download
+## Get started
+
+Download **one desktop package** for your computer:
 
 | Your computer | Download |
 | --- | --- |
-| Mac with an Apple M-series chip | [macOS · Apple Silicon](https://github.com/BravoSignal/luma/releases/download/v1.5.2/Luma-1.5.2-macOS-Apple-Silicon.zip) |
-| Mac with an Intel processor | [macOS · Intel](https://github.com/BravoSignal/luma/releases/download/v1.5.2/Luma-1.5.2-macOS-Intel.zip) |
-| Windows PC with an Intel or AMD processor | [Windows · x64](https://github.com/BravoSignal/luma/releases/download/v1.5.2/Luma-1.5.2-Windows-x64.zip) |
+| Mac with an Apple M-series chip | [macOS · Apple Silicon](https://github.com/BravoSignal/luma/releases/download/v1.6.1/Luma-1.6.1-arm64-mac.zip) |
+| Mac with an Intel processor | [macOS · Intel](https://github.com/BravoSignal/luma/releases/download/v1.6.1/Luma-1.6.1-mac.zip) |
+| Windows PC with an Intel or AMD processor | [Windows · Setup installer](https://github.com/BravoSignal/luma/releases/download/v1.6.1/Luma-Setup-1.6.1.exe) |
 
-Download **one desktop package** for your computer. On a Mac, **Apple menu → About This Mac** shows its chip or processor. GitHub's automatically generated “Source code” downloads are for developers; they are not installable apps.
+On a Mac, **Apple menu → About This Mac** shows your chip or processor. A [portable Windows ZIP](https://github.com/BravoSignal/luma/releases/download/v1.6.1/Luma-1.6.1-win.zip) is also available. GitHub's “Source code” archives are for development, not installation.
 
-**Preview release:** the Mac app is unsigned and not notarized. Apple Silicon has been tested locally; the Intel and Windows packages have been built but not run on those devices.
+1. **Install Luma.** Mac: extract the ZIP and move Luma.app to Applications. Windows: run Setup. Open settings through the **top menu-bar icon on Mac** or **system-tray icon on Windows**.
+2. **[Add Luma Bridge from the Chrome Web Store](https://chromewebstore.google.com/detail/ahjjpjjmiaokgbmoojngfnbpmicidlcc)** for YouTube Music in Chrome, Edge or Brave. The extension connects your browser to the desktop widget; both parts must be installed.
+3. **Pair them.** In Luma → Connection, copy the pairing code into the extension options. Look for the green confirmation and reload YouTube Music.
+
+No Luma account or extra Google sign-in. Each computer has its own pairing code. **English is the default; German is optional.**
 
 ## Make it yours
 
-- A separate activation zone for each screen, including the top screen edge.
-- A freely chosen key or key combination that shows the widget while held.
-- Compact playback controls and an expanded view with artwork, progress and volume.
-- Artwork colors or your own accent; adjustable size, layout, typeface and spacing.
-- Drag a free area to move temporarily; Pin remembers the position.
-- English by default, with optional German.
+- Independent activation zones for each screen, including the top edge. Delete, test or restore a zone without changing the others.
+- Your own hold key or key combination; separate activation rules, positions and layouts for individual apps.
+- Horizontal or vertical widgets with a compact view and an expanded artwork view. Set size and orientation separately for each screen.
+- Artwork colors or your own accent, adjustable typography and spacing.
+- Drag empty widget space to move temporarily; Pin saves the position. X hides the widget, with an adjustable delay before it can reopen.
+- Optional native mini playback controls in the macOS menu bar or the Windows taskbar's notification area.
+- Preferences and app profiles export/import, without sharing pairing codes.
 
-Basic playback can use system media controls. The optional **Luma Bridge** extension connects YouTube Music in Chrome, Edge or Brave for additional controls, track ratings, the playlist dialog and focusing the existing music tab. **Add to playlist** opens YouTube Music's selection dialog in the browser.
+Basic playback can use system media controls. Luma Bridge adds browser-specific controls, ratings, the YouTube Music playlist picker and focusing the existing music tab. **Add to playlist opens the picker in your browser.** The Up next feature has been removed.
 
-## Connect YouTube Music
+## What changed in 1.6.1
 
-**[Install Luma Bridge from the Chrome Web Store](https://chromewebstore.google.com/detail/ahjjpjjmiaokgbmoojngfnbpmicidlcc)**
+This release brings automatic desktop update checks and downloads, app profiles, vertical layouts, independent zone deletion with Undo, exact numeric positioning, a larger connection status and navigation that follows scrolling. It also adds native mini controls and settings export/import.
 
-Luma has two parts: the **desktop app** displays the widget, and the **browser extension** connects it to YouTube Music. Install the desktop app using the downloads above, then add Luma Bridge from the store. In the desktop app, open **Connection**, copy your pairing code and paste it into the extension options. Look for the green confirmation, then reload YouTube Music.
+The optional [Bridge 1.4.0 ZIP](https://github.com/BravoSignal/luma/releases/download/v1.6.1/Luma-Bridge-1.4.0.zip) adds a connection indicator on YouTube Music: green check, quiet green dot, or red X with setup help. If the store still has an older version, use the local extension instructions in the [setup guide](docs/SETUP.md#local-bridge-update). Use one active bridge copy at a time.
 
-**Discovered Luma in the Web Store?** Start with the desktop download table above. On macOS, open Luma through its top menu-bar icon; on Windows, use the system tray. The browser extension needs the desktop app running to show your widget.
+## Updating
 
-**For existing users:** update the desktop app while it is closed. Store-installed extensions are managed through Chrome; locally loaded copies need **Connection → Prepare extension folder**, followed by **Reload ↻** on the extension and a reload of YouTube Music. [Full installation and update guide](docs/SETUP.md)
+From **1.6.1 onward**, use **Updates** in Luma. Automatic checks and downloads are enabled by default; choose **Restart & install** when an update is ready. You can turn automatic updates off and check manually. Only stable releases are offered. Preferences and pairing are kept.
 
-The rating and playlist fixes require **Bridge 1.3.1 or newer**. If the store still offers an older version, the [1.5.2 release](https://github.com/BravoSignal/luma/releases/tag/v1.5.2) includes Bridge 1.3.1 for local installation.
+Coming from 1.5.x or earlier? Install 1.6.1 once using the downloads above. Quit the old app before replacing it. On Windows, use Setup and stop launching the old portable copy. Chrome manages updates for the store-installed extension separately.
 
-## What's changed in 1.5.2
+## Validation and platform notes
 
-Up next has been removed. Like/dislike now use the actual YouTube Music buttons and wait for a confirmed state change. The playlist command brings the browser forward and waits for a visible playlist picker. This release also includes the English interface and reorganized customization settings added since 1.4.1. See the [release notes](https://github.com/BravoSignal/luma/releases/tag/v1.5.2) for validation and limits.
+44 automated checks, interface tests and a native Mac integration check passed. The installed Apple Silicon app and live public update feed were checked. Windows and Intel packages are built and verified, but need on-device testing. The app is not signed with a developer certificate or notarized by Apple; system security prompts may apply. Update metadata has its own digital signature, and downloaded packages are checked before installation.
 
 ## Privacy
 
-Luma Bridge connects only to YouTube Music and the desktop app on the same computer. No Luma account, Luma server or analytics. Pair each computer separately. [How the local connection works](desktop/README.md#connect-youtube-music)
+The bridge connects YouTube Music to Luma on the same computer. No Luma account, analytics or music relay server. The desktop updater contacts GitHub to check and download releases; it does not send pairing codes or music metadata. App profiles use local foreground-app identification. [Connection details](desktop/README.md#connect-youtube-music)
 
 ## Development
 
-The application source is in [`desktop/`](desktop/). Start with the [development instructions](desktop/README.md#development).
+Source and development instructions are in [desktop/](desktop/README.md#development). [Update publishing guide](desktop/UPDATE-RELEASING.md).
 
 ```sh
 cd desktop
 npm ci
+npm run native:mac  # macOS native integration
+npm start
 ```
 
-The source includes automated checks and build instructions for the native media helpers. YouTube Music can change its page structure and require extension updates.
+The Windows native helper requires .NET SDK 8. Dependencies, build outputs, local settings and private signing keys are excluded from source control.
