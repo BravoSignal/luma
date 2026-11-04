@@ -31,13 +31,17 @@ Download **one desktop package** for your computer. On a Mac, **Apple menu → A
 
 Basic playback can use system media controls. The optional **Luma Bridge** extension connects YouTube Music in Chrome, Edge or Brave for additional controls, track ratings, the playlist dialog and focusing the existing music tab. **Add to playlist** opens YouTube Music's selection dialog in the browser.
 
-## Connect or update the extension
+## Connect YouTube Music
 
-The release includes **Luma Bridge 1.3.1**. The [Chrome Web Store listing](https://chromewebstore.google.com/detail/ahjjpjjmiaokgbmoojngfnbpmicidlcc) currently shows **1.3.0**. For the rating and playlist fixes in this release, use the bundled **1.3.1** extension until that version reaches the store.
+**[Install Luma Bridge from the Chrome Web Store](https://chromewebstore.google.com/detail/ahjjpjjmiaokgbmoojngfnbpmicidlcc)**
 
-**First installation:** open Luma → **Connection → Prepare extension folder**. In `chrome://extensions`, enable **Developer mode**, choose **Load unpacked**, and select that folder. Paste Luma's pairing code into the extension options and reload YouTube Music.
+Luma has two parts: the **desktop app** displays the widget, and the **browser extension** connects it to YouTube Music. Install the desktop app using the downloads above, then add Luma Bridge from the store. In the desktop app, open **Connection**, copy your pairing code and paste it into the extension options. Look for the green confirmation, then reload YouTube Music.
 
-**Already installed?** Quit Luma, replace the desktop app with the new version, reopen it and choose **Connection → Prepare extension folder** again. Click **Reload ↻** on the existing Luma extension in `chrome://extensions`, then reload YouTube Music. Your settings and pairing code are kept. [Step-by-step setup](docs/SETUP.md)
+**Discovered Luma in the Web Store?** Start with the desktop download table above. On macOS, open Luma through its top menu-bar icon; on Windows, use the system tray. The browser extension needs the desktop app running to show your widget.
+
+**For existing users:** update the desktop app while it is closed. Store-installed extensions are managed through Chrome; locally loaded copies need **Connection → Prepare extension folder**, followed by **Reload ↻** on the extension and a reload of YouTube Music. [Full installation and update guide](docs/SETUP.md)
+
+The rating and playlist fixes require **Bridge 1.3.1 or newer**. If the store still offers an older version, the [1.5.2 release](https://github.com/BravoSignal/luma/releases/tag/v1.5.2) includes Bridge 1.3.1 for local installation.
 
 ## What's changed in 1.5.2
 
