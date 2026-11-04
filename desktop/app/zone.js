@@ -1,3 +1,4 @@
+const locale=window.LumaI18n.mount(document,new URLSearchParams(location.search).get('language'));
 const box=document.getElementById('selection'),done=document.getElementById('done');let selection=null,drag=null;
 function clamp(r){const w=Math.min(innerWidth,Math.max(8,r.w)),h=Math.min(innerHeight,Math.max(8,r.h));const y=Math.max(0,Math.min(innerHeight-h,r.y));return{x:Math.max(0,Math.min(innerWidth-w,r.x)),y:y<8?0:y,w,h};}
 function render(syncInputs=true){box.style.display=selection?'block':'none';done.disabled=!selection;if(!selection)return;Object.assign(box.style,{left:selection.x+'px',top:selection.y+'px',width:selection.w+'px',height:selection.h+'px'});if(syncInputs)for(const k of ['x','y','w','h'])document.getElementById(k).value=Math.round(selection[k]);}

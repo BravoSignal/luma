@@ -14,7 +14,7 @@ function createBridge({ token, onTrack, onStatus, onResult=()=>{}, port = 17384 
  server.on('connection',socket=>{
   clients.set(socket,{seen:Date.now(),track:null,alive:true}); publish();
   socket.on('pong',()=>{ const c = clients.get(socket); if(c)c.alive=true; });
-  socket.on('message',raw=>{try { const msg=JSON.parse(raw); const c=clients.get(socket); if(!c)return; if(msg.type==='result'&&socket===active)onResult({action:String(msg.action).slice(0,30),ok:msg.ok===true,...(msg.action==='queue'?{items:(Array.isArray(msg.items)?msg.items:[]).slice(0,30).map(x=>({title:String(x?.title||'').slice(0,300),artist:String(x?.artist||'').slice(0,300)})).filter(x=>x.title)}:{})});if(msg.type==='track'){c.track=sanitizeTrack(msg.track);c.seen=Date.now();publish();} }catch{}});
+  socket.on('message',raw=>{try { const msg=JSON.parse(raw); const c=clients.get(socket); if(!c)return; if(msg.type==='result'&&socket===active&&msg.action!=='queue')onResult({action:String(msg.action).slice(0,30),ok:msg.ok===true});if(msg.type==='track'){c.track=sanitizeTrack(msg.track);c.seen=Date.now();publish();} }catch{}});
   socket.on('error',()=>{}); socket.on('close',()=>{clients.delete(socket);publish();});
  });
  server.on('error',err=>onStatus({ connected:false,error:err.code === 'EADDRINUSE' ? 'Port 17384 ist belegt. Ist Luma bereits geöffnet?' : err.message }));

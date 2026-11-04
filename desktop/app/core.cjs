@@ -1,10 +1,12 @@
 const {normalizeBinding,fromLegacy}=require('./binding.cjs');
 const crypto = require('node:crypto');
-const defaults = { zones:[],pinnedPositions:{},compactLayout:'stacked',textStyle:'system',letterSpacing:-.2,onboardingVersion:0,zoneEnabled: true, holdEnabled: false, widgetWidth:400,widgetHeight:108,key: 'F8', binding:fromLegacy('F8'), displayId: null, zone: { x: .4, y: .04, w: .2, h: .1 }, placement: 'top', accent: 'auto', customColor: '#b6dce8', size: 'adaptive', scale: 1, hoverDelay: 650, hideDelay: 650, autoStart: false };
+const defaults = { language:'en', zones:[],pinnedPositions:{},compactLayout:'stacked',textStyle:'system',letterSpacing:-.2,onboardingVersion:0,zoneEnabled: true, holdEnabled: false, widgetWidth:400,widgetHeight:108,key: 'F8', binding:fromLegacy('F8'), displayId: null, zone: { x: .4, y: .04, w: .2, h: .1 }, placement: 'top', accent: 'auto', customColor: '#b6dce8', size: 'adaptive', scale: 1, hoverDelay: 650, hideDelay: 650, autoStart: false };
 function inside(p, r) { return p.x >= r.x && p.y >= r.y && p.x < r.x + r.width && p.y < r.y + r.height; }
 function zoneBounds(config, display) { const b = display.bounds, z = config.zone; return { x: b.x + z.x * b.width, y: b.y + z.y * b.height, width: z.w * b.width, height: z.h * b.height }; }
 function sanitizeConfig(input, current = defaults) {
  const c = { ...current };
+ if(['en','de'].includes(input.language))c.language=input.language;
+ delete c.showQueue; // Discard the removed queue preference from older installations.
  if(['inline','stacked'].includes(input.compactLayout))c.compactLayout=input.compactLayout;
  if(['system','rounded','compact'].includes(input.textStyle))c.textStyle=input.textStyle;
  if(Number.isFinite(input.letterSpacing))c.letterSpacing=Math.max(-.6,Math.min(.8,input.letterSpacing));
