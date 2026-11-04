@@ -1,17 +1,22 @@
 const {normalizeBinding,fromLegacy}=require('./binding.cjs');
 const crypto = require('node:crypto');
-const defaults = { language:'en', zones:[],pinnedPositions:{},compactLayout:'stacked',textStyle:'system',letterSpacing:-.2,onboardingVersion:0,zoneEnabled: true, holdEnabled: false, widgetWidth:400,widgetHeight:108,key: 'F8', binding:fromLegacy('F8'), displayId: null, zone: { x: .4, y: .04, w: .2, h: .1 }, placement: 'top', accent: 'auto', customColor: '#b6dce8', size: 'adaptive', scale: 1, hoverDelay: 650, hideDelay: 650, autoStart: false };
+const defaults = { language:'en',autoUpdate:true,profiles:[],displayOverrides:{},orientation:'horizontal',verticalWidth:224,verticalHeight:400,miniPlayer:false,rearmDelay:1200,zonesInitialized:false, zones:[],pinnedPositions:{},compactLayout:'stacked',textStyle:'system',letterSpacing:-.2,onboardingVersion:0,zoneEnabled: true, holdEnabled: false, widgetWidth:400,widgetHeight:108,key: 'F8', binding:fromLegacy('F8'), displayId: null, zone: { x: .4, y: .04, w: .2, h: .1 }, placement: 'top', accent: 'auto', customColor: '#b6dce8', size: 'adaptive', scale: 1, hoverDelay: 650, hideDelay: 650, autoStart: false };
 function inside(p, r) { return p.x >= r.x && p.y >= r.y && p.x < r.x + r.width && p.y < r.y + r.height; }
 function zoneBounds(config, display) { const b = display.bounds, z = config.zone; return { x: b.x + z.x * b.width, y: b.y + z.y * b.height, width: z.w * b.width, height: z.h * b.height }; }
-function sanitizeConfig(input, current = defaults) {
+function sanitizeConfig(input, current = defaults, includeProfiles=true) {
  const c = { ...current };
+ if(!input||typeof input!=='object'||Array.isArray(input))input={};
+ if(typeof input.miniPlayer==='boolean')c.miniPlayer=input.miniPlayer;
+ if(typeof input.zonesInitialized==='boolean')c.zonesInitialized=input.zonesInitialized;
+ if(['horizontal','vertical'].includes(input.orientation))c.orientation=input.orientation;
+ if(Number.isFinite(input.rearmDelay))c.rearmDelay=Math.round(Math.max(0,Math.min(10000,input.rearmDelay)));
  if(['en','de'].includes(input.language))c.language=input.language;
  delete c.showQueue; // Discard the removed queue preference from older installations.
  if(['inline','stacked'].includes(input.compactLayout))c.compactLayout=input.compactLayout;
  if(['system','rounded','compact'].includes(input.textStyle))c.textStyle=input.textStyle;
  if(Number.isFinite(input.letterSpacing))c.letterSpacing=Math.max(-.6,Math.min(.8,input.letterSpacing));
  if(Number.isInteger(input.onboardingVersion))c.onboardingVersion=Math.max(0,Math.min(1,input.onboardingVersion));
- for (const k of ['zoneEnabled','holdEnabled','autoStart']) if (typeof input[k] === 'boolean') c[k] = input[k];
+ for (const k of ['zoneEnabled','holdEnabled','autoStart','autoUpdate']) if (typeof input[k] === 'boolean') c[k] = input[k];
  if (['F6','F7','F8','F9','F10','AltRight','ShiftRight'].includes(input.key)) c.key = input.key;
  if(normalizeBinding(input.binding))c.binding=normalizeBinding(input.binding);else if(input.key)c.binding=fromLegacy(c.key);
  if (['top','bottom'].includes(input.placement)) c.placement = input.placement;
@@ -19,6 +24,8 @@ function sanitizeConfig(input, current = defaults) {
  if (typeof input.customColor==='string' && /^#[0-9a-f]{6}$/i.test(input.customColor)) c.customColor=input.customColor;
  if (['compact','expanded','adaptive'].includes(input.size)) c.size=input.size;
  if ([.85,1,1.15].includes(input.scale)) c.scale=input.scale;
+ if(Number.isFinite(input.verticalWidth))c.verticalWidth=Math.round(Math.max(188,Math.min(360,input.verticalWidth)));
+ if(Number.isFinite(input.verticalHeight))c.verticalHeight=Math.round(Math.max(300,Math.min(800,input.verticalHeight)));
  if(Number.isFinite(input.widgetWidth))c.widgetWidth=Math.round(Math.max(300,Math.min(640,input.widgetWidth)));
  if(Number.isFinite(input.widgetHeight))c.widgetHeight=Math.round(Math.max(96,Math.min(180,input.widgetHeight)));
  if (Number.isFinite(input.hoverDelay)) c.hoverDelay=Math.max(200,Math.min(2000,input.hoverDelay));
@@ -30,6 +37,8 @@ function sanitizeConfig(input, current = defaults) {
  }
  if(Array.isArray(input.zones))c.zones=input.zones.filter(z=>Number.isInteger(z?.displayId)&&z.zone&&['x','y','w','h'].every(k=>Number.isFinite(z.zone[k]))).slice(0,16).map(z=>({displayId:z.displayId,enabled:z.enabled!==false,edgeTop:z.edgeTop===true,zone:sanitizeConfig({zone:z.zone},{...defaults,zones:[]}).zone})).filter((z,i,a)=>a.findIndex(x=>x.displayId===z.displayId)===i);
  if(input.pinnedPositions&&typeof input.pinnedPositions==='object'&&!Array.isArray(input.pinnedPositions))c.pinnedPositions=Object.fromEntries(Object.entries(input.pinnedPositions).filter(([id,p])=>/^-?\d+$/.test(id)&&p&&Number.isFinite(p.x)&&Number.isFinite(p.y)).slice(0,16).map(([id,p])=>[id,{x:Math.max(0,Math.min(1,p.x)),y:Math.max(0,Math.min(1,p.y))}]));
+ if(input.displayOverrides&&typeof input.displayOverrides==='object'&&!Array.isArray(input.displayOverrides))c.displayOverrides=Object.fromEntries(Object.entries(input.displayOverrides).filter(([id,v])=>/^-?\d+$/.test(id)&&v&&typeof v==='object').slice(0,16).map(([id,v])=>{const out={};if(['vertical','horizontal'].includes(v.orientation))out.orientation=v.orientation;if(Number.isFinite(v.widgetWidth))out.widgetWidth=Math.round(Math.max(300,Math.min(640,v.widgetWidth)));if(Number.isFinite(v.widgetHeight))out.widgetHeight=Math.round(Math.max(96,Math.min(180,v.widgetHeight)));if(Number.isFinite(v.verticalWidth))out.verticalWidth=Math.round(Math.max(188,Math.min(360,v.verticalWidth)));if(Number.isFinite(v.verticalHeight))out.verticalHeight=Math.round(Math.max(300,Math.min(800,v.verticalHeight)));return[id,out];}));
+ if(includeProfiles&&Array.isArray(input.profiles)){const {PROFILE_KEYS}=require('./features.cjs');c.profiles=input.profiles.filter(p=>p&&typeof p.id==='string'&&typeof p.appId==='string'&&p.appId.length>0&&p.settings&&typeof p.settings==='object').slice(0,64).map(p=>{const clean=sanitizeConfig(p.settings,defaults,false);return{id:p.id.slice(0,80),appId:p.appId.slice(0,500),name:String(p.name||p.appId).slice(0,120),enabled:p.enabled!==false,settings:Object.fromEntries(PROFILE_KEYS.filter(k=>Object.hasOwn(p.settings,k)).map(k=>[k,clean[k]]))};}).filter((p,i,a)=>a.findIndex(x=>x.id===p.id||x.appId===p.appId)===i);}
  return c;
 }
 function sanitizeTrack(t) {
