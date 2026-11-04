@@ -1,3 +1,4 @@
+const locale=window.LumaI18n.mount(document);const language=document.getElementById('language');chrome.storage.local.get('language').then(s=>{language.value=s.language==='de'?'de':'en';locale.setLanguage(language.value);});language.onchange=async()=>{locale.setLanguage(language.value);await chrome.storage.local.set({language:language.value});};
 const input=document.getElementById('token'),status=document.getElementById('status');let last=null;
 chrome.storage.local.get('token').then(s=>{input.value=s.token||'';});
 document.getElementById('form').onsubmit=async e=>{e.preventDefault();const token=input.value.trim();if(!/^[a-f0-9]{48}$/.test(token)){status.textContent='Bitte den vollständigen Kopplungscode aus Luma einfügen.';return;}await chrome.storage.local.set({token});status.textContent='Verbindung wird aufgebaut …';};
