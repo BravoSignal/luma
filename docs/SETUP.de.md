@@ -12,24 +12,25 @@ Du brauchst nur eine Desktop-ZIP für deinen Computer. Die automatisch von GitHu
 
 ## YouTube Music verbinden
 
-1. Öffne in Luma **Connection → Prepare extension folder**.
-2. Öffne im Browser `chrome://extensions`, `edge://extensions` oder `brave://extensions`.
-3. Aktiviere den **Entwicklermodus**, klicke **Entpackte Erweiterung laden** und wähle den vorbereiteten Ordner mit **manifest.json**. Eine ZIP musst du vorher entpacken.
-4. Kopiere den Kopplungscode aus Luma in die Optionen der Erweiterung und speichere ihn.
-5. Eine **grüne Bestätigung** zeigt die Verbindung an. Lade YouTube Music neu und starte einen Song.
+Du brauchst die **Luma-Desktop-App** für das Widget und die **Browser-Erweiterung** für die Verbindung zu YouTube Music.
 
-Der [Chrome-Web-Store-Eintrag](https://chromewebstore.google.com/detail/ahjjpjjmiaokgbmoojngfnbpmicidlcc) zeigt derzeit Version **1.3.0**. Für die Reparaturen dieser Version verwende die hier enthaltene Erweiterung **1.3.1** als lokale Erweiterung. Die Musik bleibt im bisherigen Browser. „Zur Playlist hinzufügen“ öffnet dort die Playlist-Auswahl.
+1. Installiere [Luma Bridge aus dem Chrome Web Store](https://chromewebstore.google.com/detail/ahjjpjjmiaokgbmoojngfnbpmicidlcc).
+2. Öffne in der Desktop-App **Connection → Copy pairing code**.
+3. Öffne die Optionen der Erweiterung über ihr Symbol in der Browserleiste, füge den Code ein und verbinde beide.
+4. Die grüne Bestätigung zeigt die Verbindung an. Lade YouTube Music neu und spiele einen Song ab.
+
+Wenn du Luma zuerst im Web Store entdeckt hast: Lade die passende Desktop-App über die [Download-Tabelle](../README.md#choose-your-download) herunter und öffne sie. Auf dem Mac findest du Luma oben in der Menüleiste, unter Windows im Infobereich. Die Erweiterung allein zeigt noch kein Desktop-Widget an.
+
+Für die Like- und Playlist-Reparaturen brauchst du **Bridge 1.3.1 oder neuer**. Falls der Store noch eine ältere Version anbietet, enthält das GitHub-Release 1.5.2 eine lokale Erweiterung 1.3.1. „Zur Playlist hinzufügen“ öffnet die Playlist-Auswahl im Browser.
 
 ## Bestehende Installation aktualisieren
 
-1. Beende Luma über das Menüleisten- oder Infobereich-Symbol.
-2. Ersetze die Desktop-App durch die neue Version und öffne sie. Deine Einstellungen und dein Kopplungscode bleiben erhalten.
-3. Wähle erneut **Connection → Prepare extension folder**.
-4. Klicke auf der Erweiterungsseite beim bestehenden Eintrag **Luma · YouTube Music Bridge** auf **Neu laden ↻**. Die Erweiterung muss für diese Version **1.3.1** anzeigen.
-5. Lade auch den **YouTube-Music-Tab neu**.
+Beende Luma, ersetze die Desktop-App durch die neue Version und öffne sie wieder. Einstellungen und Kopplung bleiben erhalten. Nach einem Store-Update lade auch YouTube Music neu.
 
-Falls du die Erweiterung aus einem selbst entpackten ZIP-Ordner geladen hast, ersetze die Dateien in diesem Ordner durch die neue Erweiterungs-ZIP und klicke dann auf Neu laden. Lösche die Erweiterung und ihre Einstellungen dafür nicht.
+Bei einer lokal geladenen Erweiterung: **Connection → Prepare extension folder**, dann auf der Erweiterungsseite **Neu laden ↻**, anschließend YouTube Music neu laden. Die neuere Desktop-Oberfläche ordnet die lokale Einrichtung unter „Local extension / developer setup“ ein.
 
-**Desktop-Version: 1.5.2. Erweiterungs-Version: 1.3.1.** „Up next“ wurde entfernt. Like/Dislike und das Öffnen der Playlist-Auswahl wurden überarbeitet.
+Beim Wechsel von einer entpackten Kopie zur Store-Version: Deaktiviere die alte Kopie, installiere die Store-Erweiterung und gib dort den Kopplungscode ein. Verwende nur eine aktive Luma-Bridge-Kopie.
+
+Für die lokale Installation: ZIP entpacken bzw. Erweiterungsordner aus Luma vorbereiten, unter `chrome://extensions` den Entwicklermodus einschalten und „Entpackte Erweiterung laden“ wählen. Wähle den Ordner mit manifest.json. [Ausführliche lokale Einrichtung](SETUP.md#local-extension--developer-setup)
 
 Die Oberfläche startet auf Englisch. Unter **Customize → Interface language** kannst du Deutsch wählen. Die Erweiterung besitzt eine eigene Sprachauswahl. Weitere Hinweise zu Aktivierung, Größen und Bedienung stehen in der [englischen Anleitung](SETUP.md).

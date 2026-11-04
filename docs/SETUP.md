@@ -18,32 +18,43 @@ You can also record a single key or combination with **Change**. Hold it to show
 
 Click free compact space or the arrow to expand. Drag free space to move temporarily; **Pin** saves the position. **X** hides the widget without stopping playback. Leave the zone and release the shortcut before triggering it again.
 
-## 3. Connect YouTube Music
+## 3. Install Luma Bridge from the store
 
-Music stays in your existing Chrome, Edge or Brave tab. Basic playback can work through system media controls. Install Luma Bridge for the additional YouTube Music controls. No Google password is entered into Luma.
+Luma Desktop displays your widget. Luma Bridge connects it to YouTube Music in your existing browser. Both must be installed, and the desktop app must be running.
 
-1. In Luma, open **Connection → Prepare extension folder**. This opens the folder containing the current extension files.
-2. Open `chrome://extensions` in Chrome, `edge://extensions` in Edge or `brave://extensions` in Brave.
-3. Enable **Developer mode** and choose **Load unpacked**.
-4. Select the folder containing **manifest.json**. Use Luma's prepared folder, or extract **Luma-Bridge-1.3.1.zip** from the release and select its extracted folder. Do not select a ZIP file.
-5. If the folder is hard to find on a Mac, copy its path from Luma. In the file picker, press **Cmd+Shift+G**, paste the path and confirm.
-6. Open the Luma extension options by clicking its toolbar icon. Copy the pairing code from Luma, paste it into the options and save it.
-7. A **green connection confirmation** shows that the extension and desktop app are paired. Reload YouTube Music and play a track.
+1. Open the [Luma Bridge Chrome Web Store listing](https://chromewebstore.google.com/detail/ahjjpjjmiaokgbmoojngfnbpmicidlcc) and choose **Add to Chrome**. Edge and Brave can also use Chrome Web Store extensions.
+2. Open the extension options through its toolbar icon.
+3. In **Luma Desktop → Connection**, choose **Copy pairing code**. Paste it into the extension options and connect.
+4. A **green confirmation** shows that they are paired. Reload your existing YouTube Music tab and play a track.
 
-**Add to playlist** brings your existing YouTube Music tab forward and opens its playlist picker. Choose the playlist in that browser dialog.
+No Google password is entered into Luma. Each computer needs its own pairing. **Add to playlist** brings the existing music tab forward and opens YouTube Music's playlist picker.
 
-The [Chrome Web Store listing](https://chromewebstore.google.com/detail/ahjjpjjmiaokgbmoojngfnbpmicidlcc) currently shows version **1.3.0**. This release includes **1.3.1** with the rating and playlist fixes; use the local folder for that version. Downloading the extension ZIP alone does not install it. Each computer needs its own local pairing.
+For the rating and playlist fixes in desktop 1.5.2, use **Bridge 1.3.1 or newer**. If the store version is older, use the local bridge from that GitHub release until the store version catches up.
+
+## If you found Luma in the Web Store first
+
+Install the desktop app using [the download table](../README.md#choose-your-download), then open it and follow the pairing steps above. On macOS, look in the **top menu bar**, not the Dock. On Windows, use the **system tray**. Downloading the browser extension alone does not install the desktop widget.
 
 ## Update an existing installation
 
 1. Quit Luma from its menu-bar or system-tray menu.
-2. Download the new desktop ZIP. On Mac, replace **Applications/Luma.app**. On Windows, replace the app folder with the newly extracted folder.
-3. Open the new Luma app. Your preferences and pairing code remain in your application data; do not delete that data.
-4. Choose **Connection → Prepare extension folder** again. This writes the extension bundled with the new desktop app.
-5. In your browser's extensions page, click **Reload ↻** on the existing **Luma · YouTube Music Bridge** card. For this release, its version should be **1.3.1**.
-6. Reload the **YouTube Music tab** too. Check for the green connected confirmation.
+2. Replace the desktop app with the new extracted version and reopen it. Keep your application data so preferences and the pairing code remain.
+3. For a store-installed bridge, check its version in the browser's extensions page and reload YouTube Music after the extension updates.
+4. For a locally loaded bridge, choose **Connection → Prepare extension folder**, click **Reload ↻** on the existing extension in `chrome://extensions`, then reload YouTube Music.
 
-If you loaded the extension from a manually extracted ZIP folder instead of Luma's prepared folder, replace the files in that same folder with the new extension ZIP before pressing Reload. You do not need to remove the extension or enter the pairing code again.
+Switching from an unpacked copy to the store? Disable the old unpacked copy, install the store extension, and paste your pairing code into the new copy's options. Use one active Luma Bridge copy at a time.
+
+## Local extension / developer setup
+
+Use this option for a newer preview than the store currently offers, or for development.
+
+1. In Luma, open **Connection → Local extension / developer setup → Prepare extension folder**. In desktop 1.5.2 the folder button is directly in Connection.
+2. Open `chrome://extensions` (Edge: `edge://extensions`; Brave: `brave://extensions`), enable **Developer mode**, then choose **Load unpacked**.
+3. Select the folder containing **manifest.json**. If using a bridge ZIP from a GitHub release, extract it first. Do not select the ZIP itself.
+4. If the folder is hard to find on a Mac, copy its path from Luma, press **Cmd+Shift+G** in the file picker and paste it.
+5. Enter Luma's pairing code in the extension options, connect and reload YouTube Music.
+
+If updating a ZIP-based installation, replace the files in the same extracted folder before clicking Reload. Keep its settings so you do not need to pair again.
 
 ## If something is missing
 
