@@ -1,104 +1,100 @@
-# Luma 1.4.1
+# Luma 1.5.2
 
-Ein anpassbares Musik-Widget für macOS und Windows. YouTube Music läuft weiter in Chrome, Edge oder Brave. Die System-Medienanbindung liefert verfügbare Titeldaten; die Browser-Erweiterung ergänzt die YouTube-Music-Steuerung.
+Your music. One moment away.
 
-## Funktionen
+A customizable desktop music widget for macOS and Windows. YouTube Music stays in Chrome, Edge or Brave. System media integration provides basic playback; the optional browser extension adds YouTube Music controls.
 
-- Eigene Aktivierungszone für jeden angeschlossenen Bildschirm, einzeln ein- und ausschaltbar.
-- Zonen vor dem Speichern verschieben und anpassen; erst „Fertig“ übernimmt die Auswahl.
-- An den oberen Bildschirmrand ziehen: Die Zone rastet ein und das Widget erscheint randbündig über der Menüleiste.
-- Widget-Breite und -Höhe unabhängig von den Aktivierungszonen.
-- Kleine Ansicht wahlweise mit Titel oben und Buttons darunter oder Titel links und Buttons rechts; Schriftbild und Buchstabenabstand einstellbar.
-- Frei aufnehmbare Halte-Taste oder Tastenkombination.
-- Maus oder gehaltene Taste zeigen die kleine Ansicht. Taste plus Maus erweitert. Der Pfeilbutton kann unabhängig davon auf- und zuklappen. Ein Klick auf freie Fläche der kleinen Ansicht erweitert ebenfalls.
-- Temporäres Verschieben auf jeder freien Fläche; der Pin speichert die Position für den jeweiligen Bildschirm.
-- X blendet das Widget aus und lässt die Musik weiterlaufen.
-- Play/Pause, vorheriger/nächster Titel, Zeitleiste, Shuffle, Wiederholung, Lautstärke, Daumen hoch/runter und Playlist-Dialog.
-- Die Daumen erscheinen im kleinen Widget, wenn ausreichend Platz vorhanden ist. In der großen Ansicht sind sie immer sichtbar.
-- Cover-Farben automatisch oder manuell. Großes Cover im Vordergrund der vollen Ansicht.
-- macOS: nur in der Menüleiste, mit sichtbarem „Luma“-Text und kurzer Einführung mit gezeichnetem Pfeil zum echten Menüleistensymbol.
-- Klick auf den Songtitel holt den vorhandenen YouTube-Music-Tab nach vorne (Erweiterung erforderlich).
-- Optionaler Button „Als Nächstes“ zeigt bis zu 30 bereits im Browser geladene Folgetitel. Falls die Liste dort noch nicht geladen ist, zuerst in YouTube Music „Als Nächstes“ öffnen.
-- Größerer Play/Pause-Button und kleinerer Titel in der kompakten Ansicht.
-- Erweiterungslogo und Bestätigung nach erfolgreicher Kopplung auf beiden Seiten.
+**English is the default language.** Choose German in **Customize → Interface language**. The extension options have their own English/German selector.
 
-## Starten
+[Deutsch](README.de.md)
 
-Mac: Passendes ZIP entpacken und Luma.app in „Programme“ verschieben. Apple Silicon ist für Macs mit Apple-Chip, Intel für ältere Intel-Macs. Oben in der Menüleiste steht „≋ Luma“. Darüber lassen sich die Einstellungen auch nach dem Schließen des Fensters wieder öffnen. Die Kurzanleitung kann jederzeit erneut aufgerufen werden.
+## What is new
 
-Windows: Das Windows-ZIP vollständig entpacken und Luma.exe starten. Alle Dateien müssen zusammenbleiben. Das Symbol im Infobereich öffnet die Einstellungen.
+Version 1.5.2 removes Up next and fixes rating buttons and the playlist dialog. Ratings use the actual YouTube Music buttons and wait for confirmation. Playlist actions focus the browser and wait for a visible playlist picker.
 
-Diese Vorabversion ist nicht mit einem Entwicklerzertifikat signiert oder bei Apple notarisiert. Beim ersten Start können entsprechende Systemabfragen erscheinen.
 
-## YouTube Music verbinden
+- A dedicated Customize section with cards for colors, size and position, layout and typography, and playback behavior.
+- English menus, tooltips, notifications, onboarding, activation-zone editor, extension options and documentation. German remains optional.
 
-Die Erweiterung ist noch nicht im Chrome Web Store hochgeladen oder veröffentlicht. Bis dahin wird sie lokal nach der folgenden Anleitung geladen.
+## Widget controls
 
-1. In Luma links „Verbindung“ öffnen und den Erweiterungsordner vorbereiten.
-2. In Chrome die Adresse `chrome://extensions` öffnen. Für Edge und Brave entsprechend `edge://extensions` beziehungsweise `brave://extensions` verwenden.
-3. Entwicklermodus einschalten und „Entpackte Erweiterung laden“ wählen. Den Ordner auswählen, in dem `manifest.json` direkt liegt. Das ZIP vorher entpacken.
-4. Falls der Ordner auf dem Mac nicht auffindbar ist: In Luma den Ordnerpfad kopieren; im Dateiauswahlfenster Cmd+Shift+G drücken, den Pfad einfügen und bestätigen.
-5. Den Kopplungscode aus Luma in den Optionen der Erweiterung einfügen und speichern. Ein Klick auf das Luma-Erweiterungssymbol öffnet diese Optionen.
-6. Die grüne Bestätigung zeigt die erfolgreiche lokale Verbindung. YouTube Music einmal neu laden und einen Titel abspielen.
+- Enter a screen zone or hold your shortcut to show the compact widget.
+- Hold the shortcut while the pointer is over the widget to expand it. Hover alone does not expand it.
+- Click an empty area of the compact widget to expand it. Drag that area to move the widget temporarily. Buttons, sliders and the track title keep their own actions.
+- Pin remembers the current position on that screen. Unpin returns to the zone anchor. Temporary positions reset the next time the widget appears.
+- The arrow expands or collapses the widget. X hides it without stopping playback. Leave the zone and release the shortcut before triggering it again.
+- Clicking the track title brings the existing YouTube Music tab to the front (extension required).
+- Play/pause, previous/next, seek, shuffle, repeat, volume, like/dislike and the YouTube Music playlist dialog.
 
-Bei einem Erweiterungsupdate den Ordner aus Luma erneut vorbereiten und auf der Erweiterungsseite „Neu laden“ anklicken. Anschließend auch YouTube Music neu laden.
+## Customize
 
-Funktionen, die ohne Erweiterung nicht verfügbar sind, bleiben anklickbar und erklären die notwendige Verbindung. „Zur Playlist“ öffnet die Auswahl in deinem YouTube-Music-Tab; die gewünschte Playlist wählst du dort selbst aus. Luma legt keine Playlist selbst an.
+Colors can follow the artwork or use a preset/custom accent. Set width and compact height independently of the activation zones. Choose a stacked or inline compact layout, then open **Fine-tune typography** for typeface and letter spacing. Change hide delay, launch at login and interface language in the same section.
 
-Die Verbindung ist ausschließlich an `127.0.0.1:17384` gebunden und mit einem lokalen Code gekoppelt. Pro Computer erfolgt die Kopplung separat. Kein Luma-Konto, kein Cloud-Dienst. Die Erweiterung greift nur auf `music.youtube.com` und diese lokale Verbindung zu.
+Each connected screen can have its own enabled activation zone. Draw a rectangle, move it, adjust the handles or numeric fields, then choose **Done**. Drag the zone to the top edge to place the widget flush with the screen edge above the menu bar. Changes are saved only when Done is pressed.
 
-## Bereich, Taste und Pin
+Record a single key or combination with **Change**. To use a modifier alone, press and release it. On macOS, the global hold shortcut needs Accessibility permission for Luma. Keys are observed, not suppressed; other applications can still respond to them.
 
-Unter „Aktivierung“ hat jeder verbundene Monitor einen eigenen Bereich. Einen Bereich aufziehen oder bearbeiten, am oberen Rand bei Bedarf einrasten lassen, anschließend „Fertig“ wählen. Ein zweiter Bereich ersetzt den ersten nicht.
+## Install the desktop app
 
-Neben der Tastenbelegung auf „Ändern“ klicken und die gewünschte Taste oder Kombination aufnehmen. Einzelne Zusatztasten beim Aufnehmen drücken und loslassen. Unter macOS benötigt die globale Halte-Taste die Freigabe von Luma in „Datenschutz & Sicherheit → Bedienungshilfen“. Die Mauszone benötigt diese Freigabe nicht. Tasten werden beobachtet, nicht unterdrückt; sie können in anderen Apps weiterhin ihre normale Funktion auslösen. Fn selbst ist keine eigenständige Belegung.
+**Mac:** unzip the package matching your chip, move Luma.app to Applications and open it. Use the Luma menu-bar item to reopen settings. There is no Dock icon. The first-run tour points to the menu-bar item and can be repeated later.
 
-Auf jeder freien Fläche lässt sich das Widget vorübergehend verschieben: Maustaste drücken und ziehen. Ein Klick ohne Ziehen erweitert die kleine Ansicht. Buttons und Songtitel behalten ihre eigene Funktion. Beim nächsten Einblenden kehrt es zur Zone beziehungsweise zur gespeicherten Position zurück. Ein Klick auf den Pin merkt sich den neuen Ort. Ein erneuter Klick löst die feste Position wieder. Positionen werden pro Bildschirm gespeichert.
+**Windows:** extract the entire ZIP and launch Luma.exe. Keep all extracted files together. Use the system-tray icon to reopen settings.
 
-## Aus dem Quellcode starten
+This preview is not signed with a developer certificate or notarized by Apple. Windows and Intel packages are built here but have not been run on those devices.
 
-Voraussetzungen: Node.js 22 oder neuer; auf dem Mac zusätzlich Apples Command Line Tools, auf Windows .NET SDK 8.
+## Connect YouTube Music
+
+The [Chrome Web Store listing](https://chromewebstore.google.com/detail/ahjjpjjmiaokgbmoojngfnbpmicidlcc) currently shows version 1.3.0. This release bundles 1.3.1 with the rating and playlist fixes; use the local setup below for that version.
+
+1. Open **Connection** in Luma and choose **Prepare extension folder**.
+2. Open `chrome://extensions` in Chrome (`edge://extensions` or `brave://extensions` in the other browsers).
+3. Enable **Developer mode**, choose **Load unpacked**, and select the folder containing `manifest.json`. Extract ZIP downloads first.
+4. On a Mac, if the folder is hard to find, copy its path from Luma, press Cmd+Shift+G in the file picker, paste the path and confirm.
+5. Copy the pairing code from Luma and save it in the extension options. Click the extension toolbar icon to open those options.
+6. A green confirmation indicates a successful local connection. Reload YouTube Music and start a track.
+
+To update a locally loaded extension, prepare the folder again from the latest desktop app, reload the extension on the browser’s extensions page, then reload YouTube Music.
+
+Unavailable extension features remain clickable and explain that pairing is required. **Add to playlist** opens the dialog in the YouTube Music tab; you choose the playlist there. Luma does not create playlists itself.
+
+The bridge listens only on `127.0.0.1:17384` and authenticates with a local pairing code. Pair each computer separately. No Luma account, Luma server, advertising or analytics. The extension only accesses YouTube Music and the local bridge. Song titles, artist names and your content are not translated.
+
+## Development
+
+Requires Node.js 22+, Apple Command Line Tools on macOS, and .NET SDK 8 for the Windows helper.
 
 ```sh
 npm ci
-```
-
-Mac-Medienhelfer bauen:
-
-```sh
+# macOS
 npm run native:mac
-```
-
-Windows-Medienhelfer bauen:
-
-```sh
+# Windows helper
 dotnet publish native/windows/Luma.Media.csproj -c Release -r win-x64 -o native/windows/bin
+npm start
 ```
 
-App starten und prüfen:
+Checks:
 
 ```sh
-npm start
 npm test
 npm run test:ui
 npm start -- --smoke
 ```
 
-Pakete erstellen:
+Build packages:
 
 ```sh
 npm run dist:mac
 npm run dist:win
 ```
 
-Der Workflow unter `.github/workflows/build.yml` baut auf Mac- und Windows-Runners. Er startet manuell oder über einen Versionstag.
+In the GitHub repository, the application lives under `desktop/`; run these commands from that directory. The root workflow builds platform packages. Keep generated build folders, local settings, pairing codes, dependencies and signing credentials out of source control. Keep only current build outputs locally to avoid accumulating old Electron runtimes.
 
-## Prüfstand und Grenzen
+## Validation and limits
 
-Automatisierte Tests prüfen Medienkopplung, Zugriffsschutz, Zonen pro Bildschirm, Randpositionen, gespeicherte Positionen, Textlayouts und die Steuerung gegen eine nachgebildete YouTube-Oberfläche. Ein gemeinsamer Test startet die echte Mac-Anbindung und das Overlay mit einer lokalen Testwiedergabe. Die Windows-Anbindung ist übersetzt.
+Tests cover local authentication, per-screen zones, pinned positions, routing, controls against a simulated YouTube Music player, language preferences, removed queue controls and the settings UI. The Mac app check starts native media integration, moves the real widget using mouse events, clicks Pin, checks saved positions and verifies that settings remain hidden during interaction.
 
-Die tatsächliche globale Tastenbedienung, die Laufzeit unter Windows/Intel-Mac und sämtliche Erweiterungsaktionen mit dem angemeldeten YouTube-Music-Tab müssen im Alltag geprüft werden. YouTube-Änderungen können Anpassungen an der Erweiterung erfordern. Die macOS-Systemanbindung nutzt einen privaten MediaRemote-Adapter; macOS-Updates können diesen Weg verändern. Die Erweiterung arbeitet unabhängig davon.
+YouTube Music may change its page structure and require extension updates. The native macOS integration uses a private MediaRemote adapter and can be affected by macOS updates. The extension works independently of that adapter. Live behavior with an authenticated YouTube Music session and global shortcuts still needs user testing. Background video remains deferred.
 
-## Herkunft
+## Credits
 
-Die macOS-Anbindung verwendet MediaRemote Adapter von Jonas van den Berg und Mitwirkenden unter BSD-3-Clause: https://github.com/ungive/mediaremote-adapter. Der verwendete Stand steht in `native/mac/UPSTREAM_COMMIT`; Lizenz und Copyright-Hinweise liegen bei. Electron, ws und uiohook-napi werden über npm eingebunden und mit ihren Lizenzhinweisen verteilt.
+The macOS helper uses MediaRemote Adapter by Jonas van den Berg and contributors under BSD-3-Clause: https://github.com/ungive/mediaremote-adapter. The pinned upstream revision is in `native/mac/UPSTREAM_COMMIT`; license and copyright notices are included. Electron, ws and uiohook-napi are installed through npm and distributed with their license notices.

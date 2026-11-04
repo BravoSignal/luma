@@ -1,7 +1,7 @@
 {
   "name": "luma-music-widget",
-  "version": "1.4.1",
-  "description": "Deine Musik. Einen Augenblick entfernt.",
+  "version": "1.5.2",
+  "description": "Your music. One moment away.",
   "author": "Luma",
   "private": true,
   "main": "app/main.cjs",
