@@ -9,10 +9,10 @@ test('vertical widget and display override keep geometry within the selected mon
 test('preference import maps zones and pins to screens on the new computer',()=>{const original=sanitizeConfig({zonesInitialized:true,zones:[{displayId:11,zone:{x:0,y:0,w:.2,h:.1}}],pinnedPositions:{11:{x:.2,y:.3}},displayOverrides:{11:{orientation:'vertical'}}});const exported=exportedPreferences(original,[{id:11,label:'Office',bounds:{width:1920,height:1080}}]);const c=importedPreferences(exported,sanitizeConfig,defaults,[{id:99,label:'Office',bounds:{width:1920,height:1080}}]);assert.equal(c.zones[0].displayId,99);assert.deepEqual(c.pinnedPositions[99],{x:.2,y:.3});assert.equal(c.displayOverrides[99].orientation,'vertical');assert.equal('11' in c.pinnedPositions,false);});
 
 test('Windows mini controls reuse native icons, route commands and remove every icon when disabled',()=>{
- const {createWindowsMini}=require('../app/windows-mini.cjs');const icons=[],commands=[];let opens=0;
+ const {createWindowsMini}=require('../app/windows-mini.cjs');const icons=[],commands=[];let opens=0,widgets=0;
  class Tray{constructor(image){this.image=image;this.handlers={};this.dead=false;icons.push(this);}on(name,fn){this.handlers[name]=fn;}setImage(i){this.image=i;}setToolTip(v){this.tip=v;}setContextMenu(m){this.menu=m;}isDestroyed(){return this.dead;}destroy(){this.dead=true;}}
- const mini=createWindowsMini({Tray,nativeImage:{createFromBuffer:b=>b},Menu:{buildFromTemplate:m=>m},onCommand:a=>commands.push(a),onOpen:()=>opens++,onDisable(){}});
- const state={enabled:true,hasTrack:true,playing:false,accent:'#c9f3a7',language:'en'};mini.update(state);assert.equal(icons.length,4);icons[1].handlers.click();icons[2].handlers.click();icons[3].handlers.click();assert.deepEqual(commands,['previous','toggle','next']);const before=icons[2].image;mini.update({...state,playing:true,accent:'#f7bea0'});assert.equal(icons.length,4);assert.notDeepEqual(icons[2].image,before);assert.equal(icons[2].tip,'Pause');mini.update({...state,hasTrack:false});icons[1].handlers.click();assert.equal(commands.length,3);mini.update({...state,enabled:false});assert(icons.every(i=>i.dead));mini.close();
+ const mini=createWindowsMini({Tray,nativeImage:{createFromBuffer:b=>b},Menu:{buildFromTemplate:m=>m},onCommand:a=>commands.push(a),onOpen:()=>opens++,onWidget:()=>widgets++,onDisable(){}});
+ const state={enabled:true,hasTrack:true,playing:false,accent:'#c9f3a7',language:'en'};mini.update(state);assert.equal(icons.length,4);icons[0].handlers.click();assert.equal(widgets,1);assert.equal(opens,0);icons[1].handlers.click();icons[2].handlers.click();icons[3].handlers.click();assert.deepEqual(commands,['previous','toggle','next']);const before=icons[2].image;mini.update({...state,playing:true,accent:'#f7bea0'});assert.equal(icons.length,4);assert.notDeepEqual(icons[2].image,before);assert.equal(icons[2].tip,'Pause');mini.update({...state,hasTrack:false});icons[1].handlers.click();assert.equal(commands.length,3);mini.update({...state,enabled:false});assert(icons.every(i=>i.dead));mini.close();
 });
 
 test('zone opening delay requires uninterrupted presence on one screen and resets on leave',()=>{
@@ -29,3 +29,5 @@ test('zone opening delay requires uninterrupted presence on one screen and reset
  assert.equal(effectiveConfig(c,'p').activationDelay,1000);
  assert.equal(effectiveConfig(c,null).activationDelay,500);
 });
+
+test('muted indicator is static at every phase while quiet music remains animated',()=>{const {iconPng}=require('../app/mini-icons.cjs');assert.deepEqual(iconPng('wave','#ffffff',0,true,true,0),iconPng('wave','#ffffff',3,true,true,0));assert.notDeepEqual(iconPng('wave','#ffffff',0,true,true,.01),iconPng('wave','#ffffff',3,true,true,.01));});

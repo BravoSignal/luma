@@ -4,3 +4,12 @@ test('configuration accepts arbitrary supported key combinations',()=>{const c=s
 test('activation size and widget size are independent on negative-coordinate monitor',()=>{const d={bounds:{x:-1600,y:100,width:1600,height:1000}},c={widgetWidth:400,widgetHeight:108,zone:{x:.25,y:.2,w:.3,h:.11}};assert.deepEqual(activationRect(c,d),{x:-1200,y:300,width:480,height:110});assert.deepEqual(widgetRect(c,d),{x:-1160,y:301,width:400,height:108});const edited={...c,zone:{x:.3,y:.245,w:.2,h:.02}};assert.deepEqual(widgetRect(edited,d),widgetRect(c,d));assert.equal(overlayRect(c,d,300).height,300);});
 test('widget stays below macOS menu bar even when activation zone touches top edge',()=>{const d={bounds:{x:0,y:0,width:1920,height:1080},workArea:{x:0,y:25,width:1920,height:1055}};const c={zone:{x:0,y:0,w:.1,h:.01},widgetWidth:400,widgetHeight:108};assert.equal(widgetRect(c,d).y,25);});
 test('expanded view near screen bottom keeps compact rectangle covered',()=>{const d={bounds:{x:0,y:0,width:1920,height:1080}},c={zone:{x:.7,y:.9,w:.2,h:.1}};const compact=widgetRect(c,d),full=overlayRect(c,d,300);assert.equal(full.x,compact.x);assert(full.y<=compact.y);assert(full.y+full.height>=compact.y+compact.height);assert(full.y+full.height<=1080);});
+test('native modifier flags survive shortcut recording or a profile switch while Ctrl is already held',()=>{
+ const b=normalizeBinding({code:'KeyJ',ctrl:true});
+ assert(bindingHeld(b,new Set([keyCode('KeyJ')]),{ctrlKey:true}));
+ assert(!bindingHeld(b,new Set([keyCode('KeyJ'),keyCode('ControlLeft')]),{ctrlKey:false}));
+ assert(!bindingHeld(b,new Set(),{ctrlKey:true}));
+});
+test('macOS bindings use native physical codes, including zero, and grouped left/right modifiers',()=>{
+ const {macBindingGroups}=require('../app/mac-binding.cjs');assert.deepEqual(macBindingGroups({code:'KeyA'}),[[0]]);assert.deepEqual(macBindingGroups({code:'KeyG',ctrl:true,meta:true}),[[5],[59,62],[55,54]]);assert.deepEqual(macBindingGroups({code:'F8'}),[[100]]);assert.equal(macBindingGroups({code:'F24'}),null);
+});

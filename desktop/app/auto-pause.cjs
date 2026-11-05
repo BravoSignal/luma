@@ -4,8 +4,8 @@ class AutoPause{
  cancel(manual=false){this.owner=null;this.pending=null;this.clearSince=null;this.phase=manual?'manual':'idle';if(manual)this.suppressed=true;}
  manual(sourceId,action){if(['toggle','play','pause','next','previous','seek','source'].includes(action)&&(!sourceId||sourceId===(this.owner||this.pending)?.sourceId))this.cancel(true);}
  result(id,ok){if(this.pending?.id===id)this.pending.ack=ok===true;}
- request(action,t,now){const command={id:'auto-'+(++this.sequence),action,sourceId:t.sourceId,key:trackKey(t),position:t.position||0,deadline:now+5000,ack:null};this.pending=command;this.phase=action==='pause'?'pausing':'resuming';return{...command};}
- step({enabled,reasons=[],sources=[],selectedId,resume=true,delay=1500,now=Date.now()}){
+ request(action,t,now,fadeMs=0){const command={id:'auto-'+(++this.sequence),action,sourceId:t.sourceId,key:trackKey(t),position:t.position||0,deadline:now+5000,ack:null};if(action==='pause'&&t.source==='extension'&&t.capabilities?.fade===true&&fadeMs>0)command.value={fadeMs:Math.min(1500,fadeMs)};this.pending=command;this.phase=action==='pause'?'pausing':'resuming';return{...command};}
+ step({enabled,reasons=[],sources=[],selectedId,resume=true,delay=1500,fadeMs=0,now=Date.now()}){
   this.reasons=reasons;const blocked=reasons.length>0;
   if(!enabled){this.cancel();this.suppressed=false;return null;}
   const active=this.pending||this.owner;const target=active&&sources.find(t=>t.sourceId===active.sourceId);
@@ -27,9 +27,9 @@ class AutoPause{
   if(!blocked){this.suppressed=false;this.phase='idle';return null;}
   if(this.suppressed)return null;
   const selected=sources.find(t=>t.sourceId===selectedId);
-  if(selected?.playing&&selected.mediaType!=='video'&&supportsAutoPause(selected))return this.request('pause',selected,now);
+  if(selected?.playing&&selected.mediaType!=='video'&&supportsAutoPause(selected))return this.request('pause',selected,now,fadeMs);
   return null;
  }
- get state(){return{phase:this.phase,ownsPause:!!this.owner,reasons:[...this.reasons]};}
+ get state(){return{phase:this.phase,fading:!!this.pending?.value?.fadeMs,ownsPause:!!this.owner,reasons:[...this.reasons]};}
 }
 module.exports={AutoPause};

@@ -1,6 +1,6 @@
 {
   "name": "luma-music-widget",
-  "version": "1.7.1",
+  "version": "1.7.6",
   "description": "Your music. One moment away.",
   "author": "Luma",
   "private": true,
@@ -86,6 +86,7 @@
       "createDesktopShortcut": true,
       "artifactName": "Luma-Setup-${version}.${ext}"
     },
-    "icon": "app/icon.png"
+    "icon": "app/icon.png",
+    "afterPack": "scripts/sign-mac.cjs"
   }
 }

@@ -1,31 +1,25 @@
-# Luma installieren oder aktualisieren
+# Luma einrichten
 
-[Download 1.7.1](https://github.com/BravoSignal/luma/releases/tag/v1.7.1) · [English](SETUP.md)
+[Download 1.7.6](https://github.com/BravoSignal/luma/releases/tag/v1.7.6) · [English](SETUP.md)
 
-## Installation
+Mac: passende ZIP für Apple Silicon oder Intel entpacken, Luma.app nach Programme verschieben und öffnen. Luma erscheint oben in der Menüleiste, ohne Dock-Symbol. Für globale Tastenkürzel bei Bedarf Eingabeüberwachung unter Datenschutz & Sicherheit erlauben und Luma neu starten. Windows: Setup ausführen und Luma im Infobereich öffnen.
 
-Wähle auf der Release-Seite genau ein Desktop-Paket: Mac mit M-Chip → Apple Silicon, Mac mit Intel → Intel, Windows → Setup. Auf dem Mac ZIP entpacken, Luma.app nach Programme bewegen und öffnen. Luma sitzt **oben in der Menüleiste**, ohne Dock-Symbol. Unter Windows Setup ausführen und das Symbol im Infobereich verwenden.
+## YouTube Music verbinden
 
-Installiere zusätzlich [Luma Bridge aus dem Chrome Web Store](https://chromewebstore.google.com/detail/ahjjpjjmiaokgbmoojngfnbpmicidlcc). Unter Luma → Verbindung den Kopplungscode kopieren und in den Erweiterungsoptionen einfügen. Auf die grüne Bestätigung achten und YouTube Music neu laden. Beide Teile sind nötig. Kein zusätzliches Google-Login; jeder Computer hat seinen eigenen Code.
+[Bridge aus dem Chrome Web Store installieren](https://chromewebstore.google.com/detail/ahjjpjjmiaokgbmoojngfnbpmicidlcc). In Luma → Verbindung den Kopplungscode kopieren, in den Bridge-Optionen einfügen und verbinden. **Den geöffneten YouTube-Music-Tab neu laden.** Die Kopplung allein aktiviert die neue Musiksteuerung noch nicht. Bridge bietet dafür einen großen Button und aktualisiert Musik-Tabs nach Installation/Update automatisch.
 
-## Neue Einstellungen
+## Musik bei Videos pausieren
 
-Unter Aktivierung → Aktivierungszeiten stehen Eintritts-, Ausblend- und Wiederöffnungsverzögerung. Unter Anpassen findest du Cover-Stärke, Unschärfe und Animationen. Titelgröße und Zusatzbuttons sind aufklappbar. Nur die Maße der gewählten Ausrichtung werden angezeigt. Darstellung zurücksetzen erhält Zonen, Positionen, Größe, Sprache und Wiedergaberegeln.
+In Luma → Wiedergabe automatisches Pausieren und Browser-Videos aktivieren. In Bridge einmal „Erkennung auf allen Websites erlauben“ anklicken und den Chrome-Dialog bestätigen. Bei bereits erlaubtem Zugriff erscheint kein Dialog. Ausgeschlossene Domains, ihre Subdomains und eingebettete Player werden ignoriert. YouTube Music ist immer ausgenommen. Fade, stumme Medien, Tab-Sichtbarkeit, Fortsetzen und Verzögerung sind einstellbar. Programmregeln reagieren derzeit auf das aktive Vordergrundprogramm, nicht auf seine tatsächliche Audioausgabe.
 
-Unter Wiedergabe lässt sich eine Quelle bevorzugen oder festhalten. Automatisches Pausieren ist zunächst aus. Programme, Browser-Videos und Browser-Audio haben eigene Regeln. Websites müssen einzeln in Bridge 1.5 freigegeben werden. Stumme Medien, Tab-Sichtbarkeit, automatisches Fortsetzen und Verzögerung sind einstellbar. Luma setzt nur selbst und bestätigt pausierte Musik fort; manuelle Eingriffe haben Vorrang.
+## Anzeige
 
-Auf macOS benötigt automatisches Pausieren YouTube Music mit Bridge. Windows unterstützt zusätzlich geeignete native Musik-Apps. Native Browser-Sitzungen werden ausgenommen, weil die Systemsteuerung zwischen Tabs wechseln kann. Programmregeln erkennen die Vordergrund-App, keine aktiven Anrufe.
+Unter Aussehen → Alltagsnutzung lassen sich neue Songs kurz einblenden und die Dauer wählen (standardmäßig 2 Sekunden). Leere Widget-Flächen ziehen, Pin zum Speichern drücken oder zum Erweitern klicken. Beim Ziehen eines Sliders bleibt das große Widget sichtbar.
 
-## Bridge 1.5 lokal installieren
+## Updates
 
-Wenn der Store noch eine ältere Version anbietet, [Bridge 1.5.0 ZIP herunterladen](https://github.com/BravoSignal/luma/releases/download/v1.7.1/Luma-Bridge-1.5.0.zip) und entpacken. `chrome://extensions` öffnen, Entwicklermodus einschalten und Entpackte Erweiterung laden wählen. Den Ordner mit manifest.json auswählen, nicht die ZIP-Datei. Bei einer bestehenden lokalen Kopie Dateien ersetzen und Neu laden drücken. Andere Luma-Kopien deaktivieren, bei Bedarf koppeln und YouTube Music neu laden.
+Desktop: Updates → Neustarten & installieren. Einstellungen und Kopplung bleiben erhalten. Die Store-Erweiterung aktualisiert Chrome nach Freigabe und Veröffentlichung. Eine entpackte Kopie wird manuell aktualisiert.
 
-Alternativ bereitet Luma → Verbindung → Lokale Erweiterung den Ordner vor. Auf dem Mac lässt sich der Pfad mit Cmd+Shift+G im Auswahldialog eingeben. Video-Websites nur bei Bedarf einzeln in den Erweiterungsoptionen erlauben.
+[Bridge 1.6.3 ZIP herunterladen](https://github.com/BravoSignal/luma/releases/download/v1.7.6/Luma-Bridge-1.6.3.zip), entpacken und bei einer bestehenden lokalen Kopie die Dateien im gleichen Ordner ersetzen. Unter chrome://extensions „Neu laden“ drücken. Bei Erstinstallation Entwicklermodus aktivieren, „Entpackte Erweiterung laden“ wählen und den Ordner mit manifest.json auswählen. Nur eine Bridge-Kopie aktiv lassen. Musik-Tabs werden automatisch aktualisiert; bei Bedarf den großen Neuladen-Button verwenden.
 
-## Updates und Fehlersuche
-
-Ab 1.6.1 unter Updates prüfen und bei Bedarf Neu starten und installieren wählen. Einstellungen und Kopplung bleiben erhalten. Ältere Versionen einmal manuell ersetzen; Windows-Nutzer sollten Setup nutzen und die alte portable Kopie nicht weiter starten. Chrome aktualisiert die Store-Erweiterung getrennt.
-
-Unter Updates → Fehlersuche lokal aufzeichnen, den Fehler nachstellen, stoppen und den Diagnosebericht exportieren. Der Bericht enthält keine Kopplungscodes, Songtitel, URLs oder persönlichen Pfade. [Windows-Anleitung (Englisch)](../desktop/DEBUG-WINDOWS.md).
-
-Windows kann Mini-Steuersymbole im Überlaufbereich verstecken. Die Pakete sind nicht mit einem Entwicklerzertifikat signiert oder von Apple notarisiert. Intel- und Windows-Pakete sind gebaut und geprüft; echte Gerätetests bleiben erforderlich.
+Die App ist nicht von Apple notarisiert. Windows/Intel benötigen weiterhin Tests auf echter Hardware. Weitere Details und Fehlerbehebung stehen in der [englischen Anleitung](SETUP.md).

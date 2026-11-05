@@ -6,5 +6,5 @@ execFileSync('clang',['-dynamiclib','-fobjc-arc','-fvisibility=default','-arch',
 fs.writeFileSync(path.join(out,'Info.plist'),'<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd"><plist version="1.0"><dict><key>CFBundleExecutable</key><string>MediaRemoteAdapter</string><key>CFBundleIdentifier</key><string>local.luma.MediaRemoteAdapter</string><key>CFBundlePackageType</key><string>FMWK</string><key>CFBundleVersion</key><string>1</string></dict></plist>');
 execFileSync('codesign',['--force','--sign','-',out],{stdio:'inherit'});
 console.log('Mac media adapter built.');
-execFileSync('clang',['-fobjc-arc','-arch','arm64','-arch','x86_64','-mmacosx-version-min=11.0',path.join(root,'DesktopHelper.m'),'-framework','AppKit','-o',path.join(root,'Luma.Desktop')],{stdio:'inherit'});
-execFileSync('codesign',['--force','--sign','-',path.join(root,'Luma.Desktop')],{stdio:'inherit'});
+execFileSync('clang',['-fobjc-arc','-arch','arm64','-arch','x86_64','-mmacosx-version-min=11.0',path.join(root,'DesktopHelper.m'),'-framework','AppKit','-framework','CoreGraphics','-framework','CoreAudio','-o',path.join(root,'Luma.Desktop')],{stdio:'inherit'});
+execFileSync('codesign',['--force','--sign','-','--identifier','local.luma.desktop-helper',path.join(root,'Luma.Desktop')],{stdio:'inherit'});
