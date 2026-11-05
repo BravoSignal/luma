@@ -1,0 +1,2 @@
+const {ipcRenderer}=require('electron');
+window.chrome.runtime={getManifest:()=>({version:'1.5.0'}),sendMessage:async()=>({connected:true})};window.chrome.storage={local:{get:keys=>ipcRenderer.invoke('video-prefs-get',keys),set:v=>ipcRenderer.invoke('video-prefs-set',v)}};window.chrome.permissions={request:v=>ipcRenderer.invoke('video-permission',v),remove:v=>ipcRenderer.invoke('video-remove',v)};

@@ -14,3 +14,18 @@ test('Windows mini controls reuse native icons, route commands and remove every 
  const mini=createWindowsMini({Tray,nativeImage:{createFromBuffer:b=>b},Menu:{buildFromTemplate:m=>m},onCommand:a=>commands.push(a),onOpen:()=>opens++,onDisable(){}});
  const state={enabled:true,hasTrack:true,playing:false,accent:'#c9f3a7',language:'en'};mini.update(state);assert.equal(icons.length,4);icons[1].handlers.click();icons[2].handlers.click();icons[3].handlers.click();assert.deepEqual(commands,['previous','toggle','next']);const before=icons[2].image;mini.update({...state,playing:true,accent:'#f7bea0'});assert.equal(icons.length,4);assert.notDeepEqual(icons[2].image,before);assert.equal(icons[2].tip,'Pause');mini.update({...state,hasTrack:false});icons[1].handlers.click();assert.equal(commands.length,3);mini.update({...state,enabled:false});assert(icons.every(i=>i.dead));mini.close();
 });
+
+test('zone opening delay requires uninterrupted presence on one screen and resets on leave',()=>{
+ const {ZoneEntryGate}=require('../app/features.cjs'),g=new ZoneEntryGate();
+ assert.equal(g.update(1,100,500),false);
+ assert.equal(g.update(1,599,500),false);
+ assert.equal(g.update(2,600,500),false);
+ assert.equal(g.update(2,1099,500),false);
+ assert.equal(g.update(2,1100,500),true);
+ assert.equal(g.update(null,1101,500),false);
+ assert.equal(g.update(2,1200,500),false);
+ g.reset();assert.equal(g.update(1,1201,0),true);
+ const c=sanitizeConfig({activationDelay:500,profiles:[{id:'p',appId:'app',settings:{activationDelay:1000}}]});
+ assert.equal(effectiveConfig(c,'p').activationDelay,1000);
+ assert.equal(effectiveConfig(c,null).activationDelay,500);
+});

@@ -23,3 +23,29 @@ English is the default; German is optional. Install the latest local Mac test bu
 - [x] Staged Mac replacement with restoration on failure; Windows Setup installer.
 - [x] English default, optional German; desktop updates and browser updates explained separately.
 - [x] Release preparation script and publishing guide; no automatic GitHub publication.
+
+## 1.7 — smart playback (in progress; do not publish before user testing)
+
+- [x] Stable media selection, prefer YouTube Music, manual source lock and targeted controls.
+- [x] Optional auto pause for selected foreground apps and videos on explicitly allowed browser sites.
+- [x] Explicit pause/play commands, confirmed pause ownership, manual override and configurable resume delay.
+- [x] Privacy-preserving diagnostics export and Windows test instructions.
+
+## Ideas saved for later
+
+- Guided automatic pairing, connection repair and actionable setup diagnosis.
+- Hold-and-gesture controls for volume and track changes.
+- Automatic layouts for different monitor/docking configurations.
+- Cross-device preferences sync with per-device screen layouts and conflict handling; never sync pairing secrets.
+
+Native meeting/call detection beyond configured apps and permitted browser media is a separate future integration. Do not infer that a running meeting app always means an active call.
+
+## 1.7.1 local preview — organized preferences
+
+- [x] Continuous zone-entry delay, with independent timing per app profile and immediate hold shortcut.
+- [x] Adjustable background artwork strength and blur, preserving front-cover readability.
+- [x] Follow system / full / reduced motion.
+- [x] Compact title size, optional ratings and playlist buttons.
+- [x] Collapsible advanced settings grouped by task; English and optional German.
+- [x] Restore appearance independently of activation, pairing and playback rules.
+- [x] User approved version 1.7.1 for publication.

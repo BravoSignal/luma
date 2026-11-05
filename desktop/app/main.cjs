@@ -5,14 +5,20 @@ const {widgetRect,overlayRect,activationRect,viewportFor}=require('./geometry.cj
 const {forDisplay,migrateZones,hitZone,saveZone}=require('./zones.cjs');
 const {bindingHeld,labelBinding}=require('./binding.cjs');
 const {createBridge}=require('./bridge.cjs');
-const {chooseTrack}=require('./routing.cjs');
+const {MediaRouter,sourceId,mergeSources,supportsAutoPause}=require('./routing.cjs');
+const {AutoPause}=require('./auto-pause.cjs');
+const {Diagnostics}=require('./diagnostics.cjs');
+const mediaRouter=new MediaRouter(),autoPauseEngine=new AutoPause();
+let diagnostics,systemSources=[],extensionSources=[],videoActivity=[],mediaSources=[],lastSourcesSignature='',lastAutoSignature='',lastMiniSignature='',artworkSource=null;
+const requestSources=new Map();
+process.on('uncaughtExceptionMonitor',()=>diagnostics?.record('error',{code:1}));
 const { createMedia } = require('./media.cjs');
 const {createWindowsMini}=require('./windows-mini.cjs');
 const {createDesktop}=require('./desktop.cjs');
-const {PROFILE_KEYS,matchingProfile,effectiveConfig,removeDisplayZone,exportedPreferences,importedPreferences,DismissalGate}=require('./features.cjs');
+const {PROFILE_KEYS,matchingProfile,effectiveConfig,removeDisplayZone,exportedPreferences,importedPreferences,DismissalGate,ZoneEntryGate}=require('./features.cjs');
 const {createUpdater}=require('./updater.cjs');
 let updater;
-const dismissalGate=new DismissalGate();
+const dismissalGate=new DismissalGate(),zoneEntryGate=new ZoneEntryGate();
 let windowsMini=null;
 let baseConfig,editingProfileId=null,frontApp=null,availableApps=[],desktopBridge=null,activeProfileId=null,lastAccent='#c9f3a7',undoZone=null,testIndicator=null,wasPreview=false;
 const {text:localize}=require('./i18n.js');
@@ -33,23 +39,43 @@ else {
 }
 function editingConfig(){return effectiveConfig(baseConfig||config,editingProfileId);}
 function displayRows(c){return screen.getAllDisplays().map(d=>({id:d.id,label:d.label||`${d.size.width} × ${d.size.height}`,width:d.size.width,height:d.size.height,zone:c.zones.find(z=>z.displayId===d.id)||null,orientation:forDisplay(c,d).orientation}));}
-function snapshot(){const d=display(),c=forDisplay(config,d),edit=editingConfig(),editD=forDisplay(edit,d);return{update:updater?.state,atTopEdge:!!c.edgeTop&&widgetRect(c,d).y===d.bounds.y,expandedByButton,held,hovered,editingProfileId,activeProfileId,frontApp,availableApps,profiles:baseConfig.profiles,editingConfig:edit,viewport:viewportFor(c,d),editingViewport:viewportFor(editD,d),editingGeometry:widgetRect(editD,d),widgetOrientation:c.orientation,editingWidgetOrientation:editD.orientation,editingDisplays:displayRows(edit),profileError:status.desktopError||null,extensionPath:path.join(app.getPath('userData'),'Luma-Browser-Erweiterung'),activationGeometry:activationRect(c,d),visible:!!overlay&&!overlay.isDestroyed()&&overlay.isVisible(),geometry:widgetRect(c,d),pinned:!!config.pinnedPositions?.[d.id]&&!temporaryPosition,bindingLabel:labelBinding(edit.binding,edit.language),runtimeBindingLabel:labelBinding(config.binding,config.language),config,token,track,status:{...status,error:tr(status.error),hookError:tr(status.hookError)},platform:process.platform,holdReady:!!hook,displays:displayRows(config)};}
+function snapshot(){const d=display(),c=forDisplay(config,d),edit=editingConfig(),editD=forDisplay(edit,d);return{mediaSources,sourcePin:mediaRouter.pinnedId,selectedSourceId:track?.sourceId||null,autoPause:autoPauseEngine.state,diagnostics:{recording:!!diagnostics?.recording},update:updater?.state,atTopEdge:!!c.edgeTop&&widgetRect(c,d).y===d.bounds.y,expandedByButton,held,hovered,editingProfileId,activeProfileId,frontApp,availableApps,profiles:baseConfig.profiles,editingConfig:edit,viewport:viewportFor(c,d),editingViewport:viewportFor(editD,d),editingGeometry:widgetRect(editD,d),widgetOrientation:c.orientation,editingWidgetOrientation:editD.orientation,editingDisplays:displayRows(edit),profileError:status.desktopError||null,extensionPath:path.join(app.getPath('userData'),'Luma-Browser-Erweiterung'),activationGeometry:activationRect(c,d),visible:!!overlay&&!overlay.isDestroyed()&&overlay.isVisible(),geometry:widgetRect(c,d),pinned:!!config.pinnedPositions?.[d.id]&&!temporaryPosition,bindingLabel:labelBinding(edit.binding,edit.language),runtimeBindingLabel:labelBinding(config.binding,config.language),config,token,track,status:{...status,error:tr(status.error),hookError:tr(status.hookError)},platform:process.platform,holdReady:!!hook,displays:displayRows(config)};}
 function refreshConfig(reset=true){
  const p=matchingProfile(baseConfig,frontApp?.id);activeProfileId=p?.id||null;
  config=effectiveConfig(baseConfig,Date.now()<previewUntil?editingProfileId:activeProfileId);
- if(reset){lastActive=0;held=false;pressed.clear();temporaryPosition=null;expandedByButton=null;dismissalGate.reset();dismissed=false;overlayHeight=widgetRect(forDisplay(config,display()),display()).height;}
+ if(reset){zoneEntryGate.reset();lastActive=0;held=false;pressed.clear();temporaryPosition=null;expandedByButton=null;dismissalGate.reset();dismissed=false;overlayHeight=widgetRect(forDisplay(config,display()),display()).height;}
  if(overlay){placeOverlay();if(!smoke)enableHook();broadcast();}updateMini();
 }
 function commitSettings(change,scope=editingProfileId){
+ if(change.preferredSource&&change.preferredSource!==baseConfig.preferredSource)autoPauseEngine.manual(null,'source');
  const global=Object.fromEntries(Object.entries(change).filter(([k])=>!scope||!PROFILE_KEYS.includes(k)));
  baseConfig=sanitizeConfig(global,baseConfig);
  if(scope){const patch=Object.fromEntries(Object.entries(change).filter(([k])=>PROFILE_KEYS.includes(k)));baseConfig=sanitizeConfig({profiles:baseConfig.profiles.map(p=>p.id===scope?{...p,settings:{...p.settings,...patch}}:p)},baseConfig);}
- const wasExpanded=expandedByButton===true,oldHeight=overlayHeight;refreshConfig(true);if(wasExpanded){expandedByButton=true;overlayHeight=oldHeight;placeOverlay();broadcast();}persist();configureMenus();updater?.setEnabled(baseConfig.autoUpdate);
+ const wasExpanded=expandedByButton===true,oldHeight=overlayHeight;refreshConfig(true);if(wasExpanded){expandedByButton=true;overlayHeight=oldHeight;placeOverlay();broadcast();}persist();configureMenus();updater?.setEnabled(baseConfig.autoUpdate);refreshMedia();
 }
-function desktopEvent(m){if(m.type==='apps'){availableApps=(Array.isArray(m.apps)?m.apps:[]).filter(a=>a&&typeof a.id==='string'&&typeof a.name==='string'&&a.name!=='Luma').slice(0,128).filter((a,i,all)=>all.findIndex(x=>x.id===a.id)===i).map(a=>({id:a.id.slice(0,500),name:a.name.slice(0,120)})).sort((a,b)=>a.name.localeCompare(b.name));broadcast();}
- if(m.type==='front-app'){const a=m.app;if(!a||typeof a.id!=='string'||typeof a.name!=='string'||a.id==='local.luma.music'||/^(Luma|Electron|Luma.Desktop)$/i.test(a.name)||a.id.toLowerCase()===process.execPath.toLowerCase())return;const changed=frontApp?.id!==a.id;frontApp={id:a.id.slice(0,500),name:a.name.slice(0,120)};if(changed){const next=matchingProfile(baseConfig,frontApp.id)?.id||null;if(next!==activeProfileId)refreshConfig(true);else broadcast();}}}
-function updateMini(){if(!config)return;const color=({mint:'#c9f3a7',lilac:'#cbb5f8',peach:'#f7bea0',custom:config.customColor,auto:lastAccent})[config.accent]||'#c9f3a7';const mini={enabled:baseConfig.miniPlayer,playing:!!track?.playing,hasTrack:!!track,accent:color,language:baseConfig.language};desktopBridge?.send({type:'mini',...mini});windowsMini?.update(mini);}
-function runCommand(action,value){if(!['toggle','next','previous','seek','volume','shuffle','repeat','like','dislike','playlist','focus'].includes(action))return;if(['seek','volume'].includes(action)&&!Number.isFinite(value))return;if(action==='shuffle'&&typeof value!=='boolean')return;if(action==='repeat'&&!['off','one','all'].includes(value))return;const missing=['like','dislike','playlist','volume','focus'].includes(action)&&track?.source!=='extension'||['shuffle','repeat'].includes(action)&&track?.capabilities?.[action]!==true&&track?.source!=='extension';if(missing){commandResult({action,ok:false,reason:'extension-required'});return;}(track?.source==='extension'?extensionBridge:bridge)?.command(action,value);}
+function desktopEvent(m){if(quitting)return;if(m.type==='apps'){availableApps=(Array.isArray(m.apps)?m.apps:[]).filter(a=>a&&typeof a.id==='string'&&typeof a.name==='string'&&a.name!=='Luma').slice(0,128).filter((a,i,all)=>all.findIndex(x=>x.id===a.id)===i).map(a=>({id:a.id.slice(0,500),name:a.name.slice(0,120)})).sort((a,b)=>a.name.localeCompare(b.name));broadcast();}
+ if(m.type==='front-app'){const a=m.app;if(!a||typeof a.id!=='string'||typeof a.name!=='string'||a.id==='local.luma.music'||/^(Luma|Electron|Luma.Desktop)$/i.test(a.name)||a.id.toLowerCase()===process.execPath.toLowerCase())return;const changed=frontApp?.id!==a.id;frontApp={id:a.id.slice(0,500),name:a.name.slice(0,120)};if(changed){diagnostics?.record('front-app',{sourceId:frontApp.id});evaluateAutoPause();const next=matchingProfile(baseConfig,frontApp.id)?.id||null;if(next!==activeProfileId)refreshConfig(true);else broadcast();}}}
+function updateMini(){if(!config)return;const color=({mint:'#c9f3a7',lilac:'#cbb5f8',peach:'#f7bea0',custom:config.customColor,auto:lastAccent})[config.accent]||'#c9f3a7';const mini={enabled:baseConfig.miniPlayer,playing:!!track?.playing,hasTrack:!!track,accent:color,language:baseConfig.language};desktopBridge?.send({type:'mini',...mini});windowsMini?.update(mini);const signature=JSON.stringify([mini.enabled,windowsMini?.diagnostics?.().icons]);if(signature!==lastMiniSignature){lastMiniSignature=signature;diagnostics?.record('mini',{enabled:mini.enabled,icons:windowsMini?.diagnostics?.().icons||0});}}
+function runCommand(action,value,targetId=track?.sourceId,automatic=false,requestId){
+ if(!['toggle','play','pause','next','previous','seek','volume','shuffle','repeat','like','dislike','playlist','focus'].includes(action))return false;
+ if(['seek','volume'].includes(action)&&!Number.isFinite(value)||action==='shuffle'&&typeof value!=='boolean'||action==='repeat'&&!['off','one','all'].includes(value))return false;
+ if(!automatic)autoPauseEngine.manual(targetId,action);
+ const target=mediaSources.find(t=>t.sourceId===targetId);if(!target){if(requestId)commandResult({action,ok:false,requestId});else commandResult({action,ok:false,reason:'source-unavailable'});return false;}
+ const missing=['like','dislike','playlist','volume','focus'].includes(action)&&target.source!=='extension'||['shuffle','repeat'].includes(action)&&target.capabilities?.[action]!==true&&target.source!=='extension';
+ if(missing){commandResult({action,ok:false,reason:'extension-required',requestId});return false;}
+ const id=requestId||crypto.randomUUID();requestSources.set(id,targetId);if(requestSources.size>200)requestSources.delete(requestSources.keys().next().value);diagnostics?.record('command',{action,sourceId:targetId});
+ const sent=(target.source==='extension'?extensionBridge:bridge)?.command(action,value,targetId,id);if(sent===false)commandResult({action,ok:false,requestId:id});return sent!==false;
+}
+function evaluateAutoPause(){
+ if(!config||quitting)return;
+ const reasons=[];if(baseConfig.pauseApps.some(a=>a.id===frontApp?.id))reasons.push('app');
+ const activity=videoActivity.filter(v=>(!baseConfig.ignoreMutedVideos||v.audible)&&(!baseConfig.videoForegroundOnly||v.visible));
+ if(process.platform==='win32'&&baseConfig.pauseForSystemVideo&&mediaSources.some(t=>t.mediaType==='video'&&t.playing&&t.sourceId!==track?.sourceId))reasons.push('video');
+ if(baseConfig.pauseForVideos&&activity.some(v=>v.kind==='video'))reasons.push('video');if(baseConfig.pauseForAudio&&activity.some(v=>v.kind==='audio'))reasons.push('audio');
+ const command=autoPauseEngine.step({enabled:baseConfig.autoPause,reasons,sources:mediaSources,selectedId:track?.sourceId,resume:baseConfig.autoResume,delay:baseConfig.resumeDelay});
+ const signature=JSON.stringify(autoPauseEngine.state);if(signature!==lastAutoSignature){lastAutoSignature=signature;diagnostics?.record('auto-pause',{phase:autoPauseEngine.phase});broadcast();}
+ if(command)runCommand(command.action,undefined,command.sourceId,true,command.id);
+}
 function broadcast(){if(quitting)return;for(const w of [settings,overlay])if(w&&!w.isDestroyed())w.webContents.send('state',snapshot());}
 function persist(){fs.writeFileSync(path.join(app.getPath('userData'),'config.json'),JSON.stringify({config:baseConfig||config,token},null,2),{mode:0o600});}
 function windowFor(opts){const w=new BrowserWindow({...(process.platform==='win32'?{icon:path.join(__dirname,'icon.png')}:{}),...opts,webPreferences:{preload:path.join(__dirname,'preload.cjs'),contextIsolation:true,nodeIntegration:false,sandbox:true}});w.webContents.setWindowOpenHandler(()=>({action:'deny'}));w.webContents.on('will-navigate',e=>e.preventDefault());return w;}
@@ -81,7 +107,8 @@ function enableHook(){
 }
 async function start(){
  let saved={};try{saved=JSON.parse(fs.readFileSync(path.join(app.getPath('userData'),'config.json'),'utf8'));}catch{}
- baseConfig=migrateZones(sanitizeConfig(saved.config||{},defaults),screen.getPrimaryDisplay().id);config=baseConfig;activeDisplayId=config.displayId??screen.getPrimaryDisplay().id;overlayHeight=widgetRect(forDisplay(config,display()),display()).height;token=typeof saved.token==='string'&&/^[a-f0-9]{48}$/.test(saved.token)?saved.token:crypto.randomBytes(24).toString('hex');persist();
+ diagnostics=new Diagnostics(path.join(app.getPath('userData'),'diagnostics'));
+ baseConfig=migrateZones(sanitizeConfig(saved.config||{},defaults),screen.getPrimaryDisplay().id);config=baseConfig;mediaRouter.pin(baseConfig.lockedSourceId);activeDisplayId=config.displayId??screen.getPrimaryDisplay().id;overlayHeight=widgetRect(forDisplay(config,display()),display()).height;token=typeof saved.token==='string'&&/^[a-f0-9]{48}$/.test(saved.token)?saved.token:crypto.randomBytes(24).toString('hex');persist();
  openSettings();
  updater=createUpdater({version:app.getVersion(),cache:path.join(app.getPath('userData'),'updates'),enabled:baseConfig.autoUpdate,packaged:app.isPackaged&&!smoke&&!capture,onState:()=>{broadcast();configureMenus();},quit:()=>app.quit()});updater.start();
  overlay=windowFor({width:420,height:150,show:false,frame:false,transparent:true,alwaysOnTop:true,skipTaskbar:true,resizable:false,hasShadow:false,focusable:false,acceptFirstMouse:true,...(process.platform==='darwin'?{type:'panel'}:{})});
@@ -90,11 +117,12 @@ async function start(){
  if(capture){await settings.loaded;await settings.webContents.executeJavaScript('document.fonts.ready');await new Promise(r=>setTimeout(r,800));const img=await settings.webContents.capturePage();fs.writeFileSync(path.resolve('..','Luma-Vorschau.png'),img.toPNG());app.quit();return;}
  const icon=nativeImage.createFromPath(path.join(__dirname,process.platform==='darwin'?'tray.png':'icon.png')).resize({width:22,height:22});if(process.platform==='darwin')icon.setTemplateImage(true);
  tray=new Tray(icon);if(process.platform==='darwin')tray.setTitle(' Luma');configureMenus();if(process.platform!=='darwin')tray.on('click',()=>{if(!overlay?.isVisible()||!inside(screen.getCursorScreenPoint(),overlay.getBounds()))openSettings();});if(process.platform==='darwin')app.dock.hide();
- bridge=createMedia({root:app.isPackaged?path.join(process.resourcesPath,'native'):path.resolve(__dirname,'../native'),onTrack:t=>{systemTrack=t;refreshMedia();},onStatus:s=>{systemStatus={...systemStatus,...s};refreshMedia();},onResult:commandResult,onDesktop:desktopEvent});
+ bridge=createMedia({root:app.isPackaged?path.join(process.resourcesPath,'native'):path.resolve(__dirname,'../native'),onTrack:t=>{systemTrack=t;},onSources:rows=>{systemSources=rows;},onStatus:s=>{systemStatus={...systemStatus,...s};refreshMedia();},onResult:commandResult,onDesktop:desktopEvent});
  desktopBridge=createDesktop({root:app.isPackaged?path.join(process.resourcesPath,'native'):path.resolve(__dirname,'../native'),onFrontApp:a=>desktopEvent({type:'front-app',app:a}),onApps:apps=>desktopEvent({type:'apps',apps}),onCommand:runCommand,onMini:visible=>{if(status.miniPlayerVisible!==visible){status.miniPlayerVisible=visible;broadcast();}},onError:error=>{status.desktopError=error;broadcast();}});desktopBridge?.send({type:'list-apps'});if(process.platform==='win32')bridge?.desktop?.('list-apps');updateMini();
- extensionBridge=createBridge({token,port:smoke?17385:17384,onTrack:t=>{extensionTrack=t;refreshMedia();},onStatus:s=>{extensionStatus=s;refreshMedia();},onResult:commandResult});
+ extensionBridge=createBridge({token,port:smoke?17385:17384,onTrack:t=>{extensionTrack=t;},onSources:rows=>{extensionSources=rows;},onActivity:rows=>{videoActivity=rows;},onIntent:id=>{autoPauseEngine.manual(id,'toggle');evaluateAutoPause();},onStatus:s=>{if(extensionStatus.connected&&!s.connected&&autoPauseEngine.reasons.some(r=>r==='video'||r==='audio'))autoPauseEngine.cancel(true);extensionStatus=s;refreshMedia();},onResult:commandResult});
  if(process.platform==='win32'){windowsMini=createWindowsMini({Tray,nativeImage,Menu,onCommand:runCommand,onOpen:openSettings,onDisable:()=>commitSettings({miniPlayer:false},null),onError:error=>{status.miniPlayerError=error;broadcast();}});updateMini();}
  if(!smoke)enableHook();
+ setInterval(evaluateAutoPause,250);
  if(smoke)require('./smoke.cjs')({settings,overlay,token,snapshot,app});
  screen.on('display-metrics-changed',()=>{held=false;placeOverlay();broadcast();});screen.on('display-removed',()=>{held=false;placeOverlay();broadcast();});
  setInterval(()=>{
@@ -105,7 +133,8 @@ async function start(){
   if(expandedByButton===false&&!held)expandedByButton=null;
   dismissed=dismissalGate.update(!!hit,held,Date.now(),config.rearmDelay);
   const allowed=config.zoneEnabled||config.holdEnabled||Date.now()<previewUntil;
-  const triggered=!dismissed&&!selecting.length&&(!!widgetDrag||!!hit||held||Date.now()<previewUntil);
+  const zoneReady=zoneEntryGate.update(selecting.length?null:hit?.id,Date.now(),config.activationDelay);
+  const triggered=!dismissed&&!selecting.length&&(!!widgetDrag||zoneReady||held||Date.now()<previewUntil);
   const over=overlay.isVisible()&&inside(p,overlay.getBounds());if(over!==hovered){hovered=over;broadcast();}
   if(triggered || over)lastActive=Date.now();
   const visible=allowed&&!dismissed&&!selecting.length&&(triggered||Date.now()-lastActive<config.hideDelay);
@@ -132,6 +161,12 @@ ipcMain.on('accent',(e,color)=>{if(!validSender(e)||typeof color!=='string'||!/^
 ipcMain.handle('manage',async(e,op,data)=>{
  if(e.sender!==settings?.webContents)return null;
  if(op==='profile-select'){editingProfileId=baseConfig.profiles.some(p=>p.id===data)?data:null;undoZone=null;}
+ if(op==='media-source'){if(data===''||mediaSources.some(t=>t.sourceId===data)){autoPauseEngine.manual(null,'source');mediaRouter.pin(data);commitSettings({lockedSourceId:data&&!data.endsWith(':legacy')?data:null},null);}}
+ if(op==='pause-app-add'){const a=availableApps.find(a=>a.id===data);if(a&&!baseConfig.pauseApps.some(p=>p.id===a.id))commitSettings({pauseApps:[...baseConfig.pauseApps,a]},null);}
+ if(op==='pause-app-remove'){commitSettings({pauseApps:baseConfig.pauseApps.filter(a=>a.id!==data)},null);}
+ if(op==='diagnostics-start')diagnostics.start();
+ if(op==='diagnostics-stop')diagnostics.stop();
+ if(op==='diagnostics-export'){const report=diagnostics.report({version:app.getVersion(),platform:process.platform,arch:process.arch,config:baseConfig,status,sources:mediaSources,selectedId:track?.sourceId,autoPause:autoPauseEngine.state,displays:screen.getAllDisplays(),mini:windowsMini?.diagnostics?.()||{enabled:baseConfig.miniPlayer,visible:!!status.miniPlayerVisible},nativeHelperPresent:fs.existsSync(app.isPackaged?path.join(process.resourcesPath,'native',process.platform==='win32'?'windows/bin/Luma.Media.exe':'mac/Luma.Desktop'):path.resolve(__dirname,'../native',process.platform==='win32'?'windows/bin/Luma.Media.exe':'mac/Luma.Desktop'))});const r=await dialog.showSaveDialog(settings,{title:tr('Export diagnostic report'),defaultPath:'Luma-diagnostics.json',filters:[{name:'JSON',extensions:['json']}]});if(!r.canceled&&r.filePath)fs.writeFileSync(r.filePath,JSON.stringify(report,null,2),{mode:0o600});}
  if(op==='apps'){if(process.platform==='darwin')desktopBridge?.send({type:'list-apps'});else bridge?.desktop?.('list-apps');}
  if(op==='profile-add'){const a=availableApps.find(a=>a.id===data)|| (frontApp?.id===data?frontApp:null);if(a&&!baseConfig.profiles.some(p=>p.appId===a.id)){const id=crypto.randomUUID(),settings=Object.fromEntries(PROFILE_KEYS.map(k=>[k,structuredClone(baseConfig[k])]));baseConfig=sanitizeConfig({profiles:[...baseConfig.profiles,{id,appId:a.id,name:a.name,enabled:true,settings}]},baseConfig);editingProfileId=id;persist();refreshConfig();}}
  if(op==='profile-reassign'&&editingProfileId){const a=availableApps.find(a=>a.id===data)|| (frontApp?.id===data?frontApp:null);if(a){if(baseConfig.profiles.some(p=>p.id!==editingProfileId&&p.appId===a.id))return{error:'This app already has a profile.'};baseConfig={...baseConfig,profiles:baseConfig.profiles.map(p=>p.id===editingProfileId?{...p,appId:a.id,name:a.name}:p)};persist();refreshConfig();}}
@@ -140,7 +175,7 @@ ipcMain.handle('manage',async(e,op,data)=>{
  if(op==='zone-undo'&&undoZone){const u=undoZone;undoZone=null;const c=effectiveConfig(baseConfig,u.scope);if(u.zone)commitSettings({zones:[...c.zones.filter(z=>z.displayId!==u.displayId),u.zone]},u.scope);}
  if(op==='zone-test'&&Number.isInteger(data)){const d=screen.getAllDisplays().find(d=>d.id===data);if(d&&editingConfig().zones.some(z=>z.displayId===data)){activeDisplayId=data;previewUntil=Date.now()+5000;dismissalGate.reset();refreshConfig();testIndicator?.destroy();const r=activationRect(forDisplay(editingConfig(),d),d);testIndicator=windowFor({...r,show:false,frame:false,transparent:true,skipTaskbar:true,focusable:false,resizable:false,hasShadow:false});testIndicator.setIgnoreMouseEvents(true);testIndicator.setAlwaysOnTop(true,'screen-saver');testIndicator.loadFile(path.join(__dirname,'zone-preview.html')).then(()=>testIndicator?.showInactive());setTimeout(()=>{testIndicator?.destroy();testIndicator=null;},4500);}}
  if(op==='export'){const r=await dialog.showSaveDialog(settings,{title:tr('Export Luma preferences'),defaultPath:'Luma-preferences.json',filters:[{name:'JSON',extensions:['json']}]});if(r.filePath&&!r.canceled)fs.writeFileSync(r.filePath,JSON.stringify(exportedPreferences(baseConfig,screen.getAllDisplays()),null,2),{mode:0o600});}
- if(op==='import'){const r=await dialog.showOpenDialog(settings,{title:tr('Import Luma preferences'),properties:['openFile'],filters:[{name:'JSON',extensions:['json']}]});if(!r.canceled&&r.filePaths[0]){try{const file=r.filePaths[0];if(fs.statSync(file).size>1024*1024)throw Error('Preferences file is too large.');const oldAuto=baseConfig.autoStart;baseConfig=importedPreferences(JSON.parse(fs.readFileSync(file,'utf8')),sanitizeConfig,defaults,screen.getAllDisplays());if(baseConfig.autoStart!==oldAuto&&!smoke)app.setLoginItemSettings({openAtLogin:baseConfig.autoStart});editingProfileId=null;undoZone=null;persist();refreshConfig();configureMenus();updater?.setEnabled(baseConfig.autoUpdate);}catch(error){return{error:error.message};}}}
+ if(op==='import'){const r=await dialog.showOpenDialog(settings,{title:tr('Import Luma preferences'),properties:['openFile'],filters:[{name:'JSON',extensions:['json']}]});if(!r.canceled&&r.filePaths[0]){try{const file=r.filePaths[0];if(fs.statSync(file).size>1024*1024)throw Error('Preferences file is too large.');const oldAuto=baseConfig.autoStart;autoPauseEngine.cancel(true);baseConfig=importedPreferences(JSON.parse(fs.readFileSync(file,'utf8')),sanitizeConfig,defaults,screen.getAllDisplays());if(baseConfig.autoStart!==oldAuto&&!smoke)app.setLoginItemSettings({openAtLogin:baseConfig.autoStart});editingProfileId=null;undoZone=null;mediaRouter.pin(baseConfig.lockedSourceId);persist();refreshConfig();configureMenus();updater?.setEnabled(baseConfig.autoUpdate);}catch(error){return{error:error.message};}}}
  broadcast();return snapshot();
 });
 ipcMain.handle('action',async(e,a)=>{if(!validSender(e))return;if(a==='tutorial-indicator-on')showTutorialIndicator(true);if(a==='tutorial-indicator-off')showTutorialIndicator(false);if(a==='record-start'){recording=true;held=false;pressed.clear();settings.webContents.setIgnoreMenuShortcuts(true);broadcast();}if(a==='record-stop'){recording=false;settings.webContents.setIgnoreMenuShortcuts(false);}if(a==='pin'){savePinnedPosition();return snapshot();}if(a==='tutorial'){openSettings();settings.loaded.then(()=>settings.webContents.send('navigate','tutorial'));}if(a==='connection'){openSettings();settings.loaded.then(()=>settings.webContents.send('navigate','connection'));}if(a==='dismiss'){widgetDrag=null;temporaryPosition=null;dismissalGate.dismiss();dismissed=true;previewUntil=0;lastActive=0;expandedByButton=null;hovered=false;overlay.hide();broadcast();}if(a==='expand'){expandedByButton=!(expandedByButton??(held&&hovered));broadcast();return snapshot();}if(a==='preview'){dismissalGate.reset();dismissed=false;previewUntil=Date.now()+7000;refreshConfig();}if(a==='copy')clipboard.writeText(token);if(a==='copy-extension-path')clipboard.writeText(path.join(app.getPath('userData'),'Luma-Browser-Erweiterung'));if(a==='copy-chrome-address')clipboard.writeText('chrome://extensions');if(a==='store')await shell.openExternal('https://chromewebstore.google.com/detail/ahjjpjjmiaokgbmoojngfnbpmicidlcc');if(a==='music')await shell.openExternal('https://music.youtube.com');if(a==='extension'){const src=app.isPackaged?path.join(process.resourcesPath,'extension'):path.resolve(__dirname,'../extension');const dest=path.join(app.getPath('userData'),'Luma-Browser-Erweiterung');fs.cpSync(src,dest,{recursive:true});await shell.openPath(dest);return dest;}if(a==='accessibility'&&process.platform==='darwin')await shell.openExternal('x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility');if(a==='settings')openSettings();});
@@ -151,5 +186,12 @@ ipcMain.on('zone',(e,r)=>{const w=selecting.find(w=>w.webContents===e.sender);if
 
 ipcMain.on('height',(e,height)=>{if(e.sender!==overlay?.webContents||!Number.isFinite(height))return;const h=Math.round(Math.max(widgetRect(forDisplay(config,display()),display()).height,Math.min(1200,height)));if(h!==overlayHeight){overlayHeight=h;placeOverlay();}});
 
-function commandResult(r){for(const w of [settings,overlay])if(w&&!w.isDestroyed())w.webContents.send('result',r);}
-function refreshMedia(){if(quitting)return;const wasConnected=status.extensionConnected;track=chooseTrack(systemTrack,extensionTrack);status={...status,connected:!!(systemStatus.connected||extensionStatus.connected),extensionConnected:!!extensionStatus.connected,error:(track?.source==='extension'?null:systemStatus.error)||extensionStatus.error||null};updateMini();broadcast();if(!wasConnected&&status.extensionConnected)for(const w of [settings,overlay])if(w&&!w.isDestroyed())w.webContents.send('connection-confirmed');}
+function commandResult(r){const id=r.requestId,source=requestSources.get(id);if(id)requestSources.delete(id);diagnostics?.record('result',{action:r.action,ok:r.ok,sourceId:source});if(id?.startsWith('auto-')){autoPauseEngine.result(id,r.ok);evaluateAutoPause();return;}for(const w of [settings,overlay])if(w&&!w.isDestroyed())w.webContents.send('result',r);}
+function refreshMedia(){if(quitting)return;const wasConnected=status.extensionConnected;
+ const ext=extensionSources.length?extensionSources:extensionTrack?[extensionTrack]:[];const sys=systemSources.length?systemSources:systemTrack?[systemTrack]:[];
+ mediaSources=mergeSources(sys,ext).map(t=>({...t,sourceId:sourceId(t),capabilities:{...t.capabilities,autoPause:supportsAutoPause(t)}}));track=mediaRouter.select(mediaSources,baseConfig.preferredSource,autoPauseEngine.owner?.sourceId||autoPauseEngine.pending?.sourceId);
+ if(track?.sourceId!==artworkSource){artworkSource=track?.sourceId;bridge?.selectSource?.(artworkSource);}
+ const sig=JSON.stringify(mediaSources.map(t=>[t.sourceId,t.playing]));if(sig!==lastSourcesSignature){lastSourcesSignature=sig;diagnostics?.record('sources',{count:mediaSources.length,sourceId:track?.sourceId,active:!!track?.playing});}
+ status={...status,...(systemStatus.errorCode!=null?{errorCode:systemStatus.errorCode}:{}),connected:!!(systemStatus.connected||extensionStatus.connected),extensionConnected:!!extensionStatus.connected,bridgeProtocol2:!!extensionStatus.protocol2,error:(track?.source==='extension'?null:systemStatus.error)||extensionStatus.error||null};if(wasConnected!==status.extensionConnected)diagnostics?.record('connection',{connected:status.extensionConnected,protocol2:status.bridgeProtocol2});
+ evaluateAutoPause();updateMini();broadcast();if(!wasConnected&&status.extensionConnected)for(const w of [settings,overlay])if(w&&!w.isDestroyed())w.webContents.send('connection-confirmed');
+}

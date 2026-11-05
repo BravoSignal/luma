@@ -1,4 +1,4 @@
-# Luma 1.6.1
+# Luma 1.7.1
 
 Your music. One moment away.
 
@@ -10,8 +10,13 @@ A customizable desktop music widget for macOS and Windows. YouTube Music stays i
 
 ## What is new
 
-Version 1.6.1 is the first stable GitHub release. [Test guide](LOCAL-TESTING.md).
+Version 1.7.1 adds smart playback and more organized customization. [Test guide](LOCAL-TESTING.md).
 
+- Organized customization: artwork strength and blur, reduced motion, compact title size, optional rating/playlist buttons and an appearance-only reset. Advanced options stay collapsed.
+- Configurable continuous zone-entry delay; hold shortcuts remain immediate.
+- Smart source preference and a source lock. Bridge 1.5 supports individual YouTube Music tabs.
+- Optional automatic pause for configured foreground apps and media on explicitly allowed browser sites, with confirmed pause ownership, manual override and a configurable resume delay.
+- Local diagnostics recording/export for Windows and Mac support, without pairing codes, media titles, URLs or personal paths.
 - Automatic desktop update checks and downloads, with an explicit restart to install. See **Updates** in settings. Update metadata is signed and packages are verified before installation.
 - Delete one screen zone, Undo deletion and test its outline independently.
 - Exact numeric zone positions; edge snapping only while using the pointer.
@@ -35,7 +40,7 @@ Version 1.6.1 is the first stable GitHub release. [Test guide](LOCAL-TESTING.md)
 
 ## Customize
 
-Colors can follow the artwork or use a preset/custom accent. Set width and compact height independently of the activation zones. Choose a stacked or inline compact layout, then open **Fine-tune typography** for typeface and letter spacing. Change hide delay, launch at login and interface language in the same section.
+Colors can follow the artwork or use a preset/custom accent. Set width and compact height independently of the activation zones. Choose a stacked or inline compact layout, then open **Fine-tune typography** for typeface and letter spacing. Set zone-entry, hide and reopening delays under **Activation → Activation timing**. Launch at login and interface language remain in Customize.
 
 Each connected screen can have its own enabled activation zone. Draw a rectangle, move it, adjust the handles or numeric fields, then choose **Done**. Drag the zone to the top edge to place the widget flush with the screen edge above the menu bar. Changes are saved only when Done is pressed.
 
@@ -57,7 +62,7 @@ In **Connection**, open the store, then copy Luma's pairing code into the extens
 
 For preview versions newer than the store, expand **Local extension / developer setup** and prepare the extension folder. In your browser's extensions page, enable Developer mode and load that unpacked folder. For an existing local copy, prepare the folder again, reload the extension, then reload YouTube Music. Store-installed extensions use the browser's extension update mechanism.
 
-The bridge connects only to `127.0.0.1:17384` with your local pairing code. Pair each computer separately. Like/dislike and the playlist fixes require Bridge 1.3.1 or newer; this release bundles 1.4.0. **Add to playlist** opens the picker in your existing YouTube Music tab.
+The bridge connects only to `127.0.0.1:17384` with your local pairing code. Pair each computer separately. Like/dislike and the playlist fixes require Bridge 1.3.1 or newer; this preview bundles 1.5.0. **Add to playlist** opens the picker in your existing YouTube Music tab.
 
 ## Development
 
@@ -98,3 +103,17 @@ YouTube Music may change its page structure and require extension updates. The n
 ## Credits
 
 The macOS helper uses MediaRemote Adapter by Jonas van den Berg and contributors under BSD-3-Clause: https://github.com/ungive/mediaremote-adapter. The pinned upstream revision is in `native/mac/UPSTREAM_COMMIT`; license and copyright notices are included. Electron, ws and uiohook-napi are installed through npm and distributed with their license notices.
+
+## Smart playback preview
+
+Open Playback to choose a preferred source or lock to one. The lock waits if the source disappears. Stable source locks survive app restarts; machine-specific source locks are excluded from preferences export.
+
+Automatic pause is off by default. Enable it, select foreground apps, and independently enable browser video/audio rules. Add allowed websites in Bridge 1.5 options; optional access is requested separately for each site. Muted media and hidden tabs can be ignored. YouTube Music itself is excluded. Native Windows video-session detection is an additional optional rule when the OS identifies a session as video; mute detection does not apply to those native sessions.
+
+Luma issues explicit pause/play commands and resumes only after a confirmed pause, unchanged source/track and the chosen clear interval. Manual playback/seek/source changes cancel ownership. It does not detect native meeting/call state; foreground-app rules deliberately apply whenever the selected app is foreground. Permitted web meeting audio/video may be detected like other media.
+
+macOS exposes one system media source at a time. To avoid resuming a different OS player after a video takes focus, this preview enables automatic pause on macOS through the targeted YouTube Music Bridge, rather than the global system source. Windows can target its reported application sessions; multiple tabs in one browser should use Bridge.
+
+See [Windows testing and debugging](DEBUG-WINDOWS.md).
+
+Automatic pause for browser music uses the targeted YouTube Music Bridge. Native browser sessions are excluded because a browser can redirect its system session to another tab. Other native Windows music apps can use their reported play/pause controls.

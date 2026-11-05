@@ -1,3 +1,3 @@
 const {ipcRenderer}=require('electron');
 window.chrome.storage={local:{get:key=>ipcRenderer.invoke('qa-extension-get',key),set:value=>ipcRenderer.invoke('qa-extension-set',value)}};
-window.chrome.runtime={getManifest:()=>({version:'1.4.0'}),sendMessage:async()=>({connected:!!window.__qaConnected})};
+window.chrome.runtime={getManifest:()=>({version:'1.5.0'}),sendMessage:async()=>({connected:!!window.__qaConnected})};

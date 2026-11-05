@@ -33,3 +33,21 @@ html[lang=de] .music-card.command-failed:after{content:'Player hat den Befehl ni
 .update-details{padding:24px 28px;display:flex;flex-direction:column;gap:12px}.update-details>strong{font-size:22px}.update-details small{color:var(--muted);line-height:1.6}.update-details p{margin:0;line-height:1.5}.update-actions{display:flex;flex-wrap:wrap;gap:12px;align-items:center}.update-details progress{width:100%;height:8px;accent-color:var(--accent)}[hidden]{display:none!important}
 
 .update-actions .outline{width:auto}.update-card .update-details{padding:22px 0 8px}
+
+.pause-apps-group,.diagnostics-card{margin-top:20px}.automation-status{padding:14px;border-radius:10px;background:#ffffff06;color:var(--accent);line-height:1.6}.pause-app-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-top:1px solid var(--line)}.needs-bridge{color:var(--accent)!important}.diagnostics-card p{line-height:1.6}.diagnostics-card .outline{width:auto}
+
+.smart-left{min-width:0}#playback .small{font-size:11px;line-height:1.7;color:var(--muted)}#media-source-status{font-size:12px;line-height:1.6;color:var(--accent)}
+
+/* Optional appearance controls keep the foreground readable. */
+.music-card .cover img{opacity:var(--artwork-opacity,.14);filter:blur(var(--artwork-blur,16px))}
+.music-card.compact .song,.music-card.compact.layout-stacked .song{font-size:var(--title-size,13px)}
+.music-card.hide-ratings [data-action=like],.music-card.hide-ratings [data-action=dislike],.music-card.hide-playlist .playlist-button{display:none!important}
+html[data-motion=reduced] .music-card{transition:none}html[data-motion=reduced] .music-card .bars i{animation:none!important}
+@media(prefers-reduced-motion:reduce){html[data-motion=full] .music-card{transition:height .18s cubic-bezier(.22,.7,.3,1)}html[data-motion=full] .music-card.playing .bars i{animation:equalize .95s ease-in-out infinite alternate!important}}
+.settings-details{border-top:1px solid var(--line);margin-top:12px;padding-top:14px}.settings-details>summary{color:#c4d2bf;font-size:11px;cursor:pointer;line-height:1.6;padding:4px 0}.settings-details>summary span{display:block;font-size:10px;color:#8b9c85;margin:3px 0 0 14px;font-weight:400}.settings-details[open]>summary{color:var(--accent);margin-bottom:8px}.activation-timing{background:#171e19;border:1px solid #354132;border-radius:12px;padding:14px 20px;margin-top:16px}.activation-timing .preference{gap:24px}.activation-timing select{min-width:160px}.appearance-reset{display:flex;align-items:center;justify-content:space-between;gap:20px;margin:18px 2px}.appearance-reset p{font-size:10px;color:#8b9c85;max-width:500px;line-height:1.7}.appearance-reset button{flex-shrink:0}.settings-details summary:focus-visible{outline:2px solid var(--accent);outline-offset:4px;border-radius:3px}@media(max-width:1000px){.appearance-reset{align-items:flex-start;flex-direction:column;gap:8px}}
+
+.music-card.compact .cover img{opacity:var(--compact-artwork-opacity,.42);filter:blur(var(--compact-artwork-blur,2px))}
+.music-card.vertical.compact .song{font-size:var(--title-size,13px)!important}
+.music-card.hide-ratings.hide-playlist:not(.compact) .secondary-controls{display:none}
+
+.preference[hidden]{display:none!important}.preference input[type=range]{accent-color:var(--accent)}
