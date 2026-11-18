@@ -1,6 +1,6 @@
 # Luma einrichten
 
-[Download 1.7.6](https://github.com/BravoSignal/luma/releases/tag/v1.7.6) · [English](SETUP.md)
+[Download 1.8.4](https://github.com/BravoSignal/luma/releases/tag/v1.8.4) · [English](SETUP.md)
 
 Mac: passende ZIP für Apple Silicon oder Intel entpacken, Luma.app nach Programme verschieben und öffnen. Luma erscheint oben in der Menüleiste, ohne Dock-Symbol. Für globale Tastenkürzel bei Bedarf Eingabeüberwachung unter Datenschutz & Sicherheit erlauben und Luma neu starten. Windows: Setup ausführen und Luma im Infobereich öffnen.
 
@@ -20,6 +20,10 @@ Unter Aussehen → Alltagsnutzung lassen sich neue Songs kurz einblenden und die
 
 Desktop: Updates → Neustarten & installieren. Einstellungen und Kopplung bleiben erhalten. Die Store-Erweiterung aktualisiert Chrome nach Freigabe und Veröffentlichung. Eine entpackte Kopie wird manuell aktualisiert.
 
-[Bridge 1.6.3 ZIP herunterladen](https://github.com/BravoSignal/luma/releases/download/v1.7.6/Luma-Bridge-1.6.3.zip), entpacken und bei einer bestehenden lokalen Kopie die Dateien im gleichen Ordner ersetzen. Unter chrome://extensions „Neu laden“ drücken. Bei Erstinstallation Entwicklermodus aktivieren, „Entpackte Erweiterung laden“ wählen und den Ordner mit manifest.json auswählen. Nur eine Bridge-Kopie aktiv lassen. Musik-Tabs werden automatisch aktualisiert; bei Bedarf den großen Neuladen-Button verwenden.
+[Bridge 1.7.1 ZIP herunterladen](https://github.com/BravoSignal/luma/releases/download/v1.8.4/Luma-Bridge-1.7.1.zip), entpacken und bei einer bestehenden lokalen Kopie die Dateien im gleichen Ordner ersetzen. Unter chrome://extensions „Neu laden“ drücken. Bei Erstinstallation Entwicklermodus aktivieren, „Entpackte Erweiterung laden“ wählen und den Ordner mit manifest.json auswählen. Nur eine Bridge-Kopie aktiv lassen. Musik-Tabs werden automatisch aktualisiert; bei Bedarf den großen Neuladen-Button verwenden.
 
 Die App ist nicht von Apple notarisiert. Windows/Intel benötigen weiterhin Tests auf echter Hardware. Weitere Details und Fehlerbehebung stehen in der [englischen Anleitung](SETUP.md).
+
+## Neue Widget-Optionen
+
+Per Tastenkürzel geöffnet bleibt das Widget beim Darüberfahren klein; ein Klick auf freie Fläche oder Pfeil erweitert es. Pin bleibt beim Verschieben aktiv. Die optionale Sperre in Activation greift erst nach Pin + X; die Halte-Taste hebt sie auf. Der optionale Live-Videohintergrund benötigt Bridge 1.7.1 oder neuer. Für ausgewählte Apps kann Auto-Pause auf tatsächliche Audioausgabe im Vordergrund reagieren. Auf dem Mac braucht dies macOS 14.2 oder neuer und die Systemaudio-Freigabe.

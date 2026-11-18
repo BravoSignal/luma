@@ -7,6 +7,7 @@
 static CGEventFlags modifierMask(CGKeyCode key){switch(key){case 56:return NX_DEVICELSHIFTKEYMASK;case 60:return NX_DEVICERSHIFTKEYMASK;case 59:return NX_DEVICELCTLKEYMASK;case 62:return NX_DEVICERCTLKEYMASK;case 58:return NX_DEVICELALTKEYMASK;case 61:return NX_DEVICERALTKEYMASK;case 55:return NX_DEVICELCMDKEYMASK;case 54:return NX_DEVICERCMDKEYMASK;default:return 0;}}
 static BOOL modifierDown(CGKeyCode key,CGEventFlags flags){CGEventFlags mask=modifierMask(key);return mask&&(flags&mask)!=0;}
 static void emit(NSDictionary *obj){NSData *d=[NSJSONSerialization dataWithJSONObject:obj options:0 error:nil];if(d){fwrite(d.bytes,1,d.length,stdout);fputc('\n',stdout);fflush(stdout);}}
+#import "AppAudioMeter.m"
 // Read output volume/mute only. No audio is captured and no device setting is changed.
 static CGFloat outputVolume(){AudioObjectID device=kAudioObjectUnknown;UInt32 size=sizeof(device);AudioObjectPropertyAddress a={kAudioHardwarePropertyDefaultOutputDevice,kAudioObjectPropertyScopeGlobal,0};if(AudioObjectGetPropertyData(kAudioObjectSystemObject,&a,0,NULL,&size,&device)!=noErr||device==kAudioObjectUnknown)return 1;
  UInt32 muted=0;size=sizeof(muted);a=(AudioObjectPropertyAddress){kAudioDevicePropertyMute,kAudioDevicePropertyScopeOutput,0};if(AudioObjectHasProperty(device,&a)&&AudioObjectGetPropertyData(device,&a,0,NULL,&size,&muted)==noErr&&muted)return 0;
@@ -25,6 +26,7 @@ static NSImage *whiteSymbol(NSString *name,NSString *label){NSImage *base=[NSIma
 -(void)drawRect:(NSRect)r{[self.accent setFill];for(int i=0;i<4;i++){CGFloat h=levels[i]>0?levels[i]:3;[[NSBezierPath bezierPathWithRoundedRect:NSMakeRect(3+i*4,NSMidY(self.bounds)-h/2,2,h) xRadius:1 yRadius:1] fill];}}
 @end
 @interface LumaDesktop:NSObject<NSApplicationDelegate>
+@property(strong) LumaAppAudioMeter *appMeter;
 @property(strong) NSArray *shortcutGroups;@property NSInteger shortcutGeneration;@property BOOL shortcutHeld;@property BOOL shortcutEnabled;@property NSTimeInterval shortcutSent;@property BOOL keyboardAccess;
 @property(strong) NSStatusItem *item;@property(strong) WaveView *wave;@property(strong) NSButton *play;@property(strong) NSMutableData *input;@property(strong) NSDictionary *latest;
 @end
@@ -32,8 +34,9 @@ static NSImage *whiteSymbol(NSString *name,NSString *label){NSImage *base=[NSIma
 -(NSDictionary*)appInfo:(NSRunningApplication*)a{return @{ @"id":a.bundleIdentifier?:a.executableURL.path?:@"",@"name":a.localizedName?:@"Application",@"path":a.bundleURL.path?:@""};}
 -(void)front{NSRunningApplication *a=NSWorkspace.sharedWorkspace.frontmostApplication;if(a)emit(@{@"type":@"front-app",@"app":[self appInfo:a]});}
 -(void)applicationDidFinishLaunching:(NSNotification*)n{
- self.input=[NSMutableData data];[NSWorkspace.sharedWorkspace.notificationCenter addObserver:self selector:@selector(activated:) name:NSWorkspaceDidActivateApplicationNotification object:nil];[self front];
+ self.appMeter=[LumaAppAudioMeter new];self.input=[NSMutableData data];[NSWorkspace.sharedWorkspace.notificationCenter addObserver:self selector:@selector(activated:) name:NSWorkspaceDidActivateApplicationNotification object:nil];[self front];
  __weak LumaDesktop *weak=self;NSFileHandle.fileHandleWithStandardInput.readabilityHandler=^(NSFileHandle *h){NSData *chunk=h.availableData;if(!chunk.length){dispatch_async(dispatch_get_main_queue(),^{[NSApp terminate:nil];});return;}dispatch_async(dispatch_get_main_queue(),^{LumaDesktop *s=weak;if(!s)return;[s.input appendData:chunk];while(YES){const char *bytes=s.input.bytes;NSUInteger count=s.input.length,pos=0;while(pos<count&&bytes[pos]!='\n')pos++;if(pos==count)break;NSData *line=[s.input subdataWithRange:NSMakeRange(0,pos)];[s.input replaceBytesInRange:NSMakeRange(0,pos+1) withBytes:NULL length:0];NSDictionary *m=[NSJSONSerialization JSONObjectWithData:line options:0 error:nil];if([m isKindOfClass:NSDictionary.class])[s command:m];}if(s.input.length>65536)[s.input setLength:0];});};
+ [NSTimer scheduledTimerWithTimeInterval:.2 repeats:YES block:^(NSTimer *t){LumaDesktop *s=weak;if(s.appMeter)emit([s.appMeter poll]);}];
  [NSTimer scheduledTimerWithTimeInterval:.025 repeats:YES block:^(NSTimer *t){[weak pollShortcut];}];
  [NSTimer scheduledTimerWithTimeInterval:.06 repeats:YES block:^(NSTimer *t){LumaDesktop *s=weak;if(s.wave&&s.item){[s.wave advance];}}];
 }
@@ -44,11 +47,13 @@ static NSImage *whiteSymbol(NSString *name,NSString *label){NSImage *base=[NSIma
  BOOL down=self.keyboardAccess;for(NSArray *group in self.keyboardAccess?self.shortcutGroups:@[]){BOOL any=NO;for(NSNumber *key in group)if(modifierMask(key.unsignedShortValue)?modifierDown(key.unsignedShortValue,flags):(CGEventSourceKeyState(kCGEventSourceStateHIDSystemState,key.unsignedShortValue)||CGEventSourceKeyState(kCGEventSourceStateCombinedSessionState,key.unsignedShortValue))){any=YES;break;}if(!any){down=NO;break;}}
  if(down!=self.shortcutHeld||now-self.shortcutSent>1){self.shortcutHeld=down;self.shortcutSent=now;emit(@{@"type":@"shortcut-state",@"held":@(down),@"generation":@(self.shortcutGeneration),@"inputMonitoring":@(CGPreflightListenEventAccess())});}
 }
+-(void)applicationWillTerminate:(NSNotification*)notification{[self.appMeter stop];}
 -(void)activated:(NSNotification*)n{[self front];}
 -(NSButton*)button:(NSString*)symbol label:(NSString*)label action:(SEL)action x:(CGFloat)x{
  NSButton *b=[[NSButton alloc]initWithFrame:NSMakeRect(x,1,25,NSStatusBar.systemStatusBar.thickness-2)];b.bordered=NO;b.title=@"";b.imagePosition=NSImageOnly;[b setAccessibilityLabel:label];b.image=whiteSymbol(symbol,label);b.contentTintColor=NSColor.whiteColor;b.target=self;b.action=action;b.toolTip=label;return b;
 }
 -(void)command:(NSDictionary*)m{
+ if([m[@"type"] isEqual:@"audio-meter-config"]){[self.appMeter stop];self.appMeter.enabled=[m[@"enabled"] boolValue];self.appMeter.apps=[m[@"apps"] isKindOfClass:NSArray.class]?m[@"apps"]:@[];self.appMeter.pid=0;self.appMeter.retryAt=0;return;}
  if([m[@"type"] isEqual:@"shortcut-config"]){self.shortcutEnabled=NO;self.shortcutHeld=NO;self.shortcutSent=0;self.shortcutGeneration=[m[@"generation"] integerValue];self.keyboardAccess=CGPreflightListenEventAccess();NSArray *groups=m[@"groups"];BOOL valid=[groups isKindOfClass:NSArray.class]&&groups.count>0&&groups.count<=5;for(id group in valid?groups:@[]){if(![group isKindOfClass:NSArray.class]||[group count]<1||[group count]>2){valid=NO;break;}for(id key in group)if(![key isKindOfClass:NSNumber.class]||[key integerValue]<0||[key integerValue]>127){valid=NO;break;}}
  self.shortcutGroups=valid?groups:@[];self.shortcutEnabled=valid&&[m[@"enabled"] boolValue];emit(@{@"type":@"shortcut-state",@"held":@NO,@"generation":@(self.shortcutGeneration),@"inputMonitoring":@(CGPreflightListenEventAccess())});return;}
 

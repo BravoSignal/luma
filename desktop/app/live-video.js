@@ -1,0 +1,10 @@
+(function(root){function createLiveVideo({video,onReady=()=>{},onFallback=()=>{}}){let media=null,buffer=null,url=null,streamId=null,next=0,queue=[],bytes=0,started=false,generation=0;
+ function reset(){++generation;video.pause();if(url)URL.revokeObjectURL(url);url=null;media=null;buffer=null;streamId=null;queue=[];bytes=0;started=false;video.removeAttribute('src');video.load();}
+ function fail(){reset();onFallback();}
+ function pump(){if(!buffer||buffer.updating)return;try{if(video.buffered.length){const start=video.buffered.start(0),end=video.buffered.end(video.buffered.length-1);if(end-start>=.9&&!started){started=true;video.currentTime=Math.max(start,end-1.2);video.play().catch(()=>{});}if(started&&end-video.currentTime>2)video.currentTime=Math.max(start,end-1.2);if(end-start>12&&video.currentTime>end-8){buffer.remove(start,end-8);return;}}if(queue.length){const data=queue.shift();bytes-=data.byteLength;buffer.appendBuffer(data);}}catch{fail();}}
+ video.muted=true;video.playsInline=true;video.addEventListener('loadeddata',onReady);video.addEventListener('error',()=>{if(streamId)fail();});
+ return{push(packet){if(!packet.chunk||packet.mime!=='video/webm;codecs=vp8'||!Number.isInteger(packet.sequence))return;
+ if(packet.streamId!==streamId){reset();if(packet.sequence!==0)return;streamId=packet.streamId;next=0;const token=generation;if(!MediaSource.isTypeSupported(packet.mime)){fail();return;}media=new MediaSource();url=URL.createObjectURL(media);video.src=url;media.addEventListener('sourceopen',()=>{if(token!==generation)return;try{buffer=media.addSourceBuffer(packet.mime);buffer.addEventListener('updateend',pump);pump();}catch{fail();}},{once:true});}
+ if(packet.sequence!==next){fail();return;}next++;try{const raw=atob(packet.chunk),data=Uint8Array.from(raw,c=>c.charCodeAt(0));bytes+=data.byteLength;if(bytes>3*1024*1024){fail();return;}queue.push(data);pump();}catch{fail();}},reset};}
+ const api={createLiveVideo};if(typeof module!=='undefined'&&module.exports)module.exports=api;else root.LumaLiveVideo=api;
+})(typeof window!=='undefined'?window:globalThis);

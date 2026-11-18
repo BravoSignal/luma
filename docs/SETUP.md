@@ -1,14 +1,14 @@
 # Set up Luma
 
-[Download Luma 1.7.6](https://github.com/BravoSignal/luma/releases/tag/v1.7.6) · [Deutsch](SETUP.de.md) · [Back to Luma](../README.md)
+[Download Luma 1.8.4](https://github.com/BravoSignal/luma/releases/tag/v1.8.4) · [Deutsch](SETUP.de.md) · [Back to Luma](../README.md)
 
 ## Install the desktop app
 
 | Computer | Download |
 | --- | --- |
-| Mac · Apple Silicon (M-series) | [Mac app](https://github.com/BravoSignal/luma/releases/download/v1.7.6/Luma-1.7.6-arm64-mac.zip) |
-| Mac · Intel | [Mac app](https://github.com/BravoSignal/luma/releases/download/v1.7.6/Luma-1.7.6-mac.zip) |
-| Windows · Intel / AMD | [Setup installer](https://github.com/BravoSignal/luma/releases/download/v1.7.6/Luma-Setup-1.7.6.exe) |
+| Mac · Apple Silicon (M-series) | [Mac app](https://github.com/BravoSignal/luma/releases/download/v1.8.4/Luma-1.8.4-arm64-mac.zip) |
+| Mac · Intel | [Mac app](https://github.com/BravoSignal/luma/releases/download/v1.8.4/Luma-1.8.4-mac.zip) |
+| Windows · Intel / AMD | [Setup installer](https://github.com/BravoSignal/luma/releases/download/v1.8.4/Luma-Setup-1.8.4.exe) |
 
 Mac: extract the ZIP, move Luma.app to Applications and open it. Luma lives in the top menu bar, without a Dock icon. Allow Input Monitoring under macOS Privacy & Security when using a global hold shortcut, then restart Luma if macOS asks. This preview uses ad-hoc signing and is not notarized.
 
@@ -29,7 +29,7 @@ Activation controls independent per-screen zones, free hold shortcuts and timing
 
 Automatic pause starts off. In Playback, enable Automatic pause and Pause for browser videos. In Bridge options, click **Enable detection on all websites** and accept Chrome’s prompt. If access was already allowed, no prompt appears; the button confirms the enabled state. Add domains to Excluded websites to keep music playing there; subdomains and embedded players on excluded pages are ignored. Reload already open video tabs after an extension update. YouTube Music is always excluded.
 
-Choose fade duration, muted/visible-tab filters, automatic resume and delay in Luma. Music resumes only after a pause Luma issued and confirmed. Manual playback and seeking take priority. Foreground-app rules pause whenever that application is in front; app-specific audio-output detection is not included.
+Choose fade duration, muted/visible-tab filters, automatic resume and delay in Luma. Music resumes only after a pause Luma issued and confirmed. Manual playback and seeking take priority. For selected apps, choose whether to pause whenever they are in front or only while they output sound. Enable sound detection separately and adjust sensitivity. On Mac, this requires macOS 14.2 or newer and system audio permission. Only the selected foreground app is measured; samples are discarded immediately.
 
 ## Updates
 
@@ -37,7 +37,7 @@ Desktop: Updates → Restart & install. Settings and pairing are preserved. Chro
 
 ## Local bridge update
 
-[Download Bridge 1.6.3 ZIP](https://github.com/BravoSignal/luma/releases/download/v1.7.6/Luma-Bridge-1.6.3.zip) if the store version is older. Extract it first. Open chrome://extensions (or the Edge/Brave equivalent), enable Developer mode and use Load unpacked for a first install. Select the folder containing manifest.json, not the ZIP. For an existing unpacked copy, replace files **inside the same folder** and click Reload to preserve pairing. Keep one Bridge copy active. YouTube Music tabs refresh automatically; use the refresh button or browser reload if needed. Website access remains optional and can be disabled in Bridge options.
+[Download Bridge 1.7.1 ZIP](https://github.com/BravoSignal/luma/releases/download/v1.8.4/Luma-Bridge-1.7.1.zip) if the store version is older. Extract it first. Open chrome://extensions (or the Edge/Brave equivalent), enable Developer mode and use Load unpacked for a first install. Select the folder containing manifest.json, not the ZIP. For an existing unpacked copy, replace files **inside the same folder** and click Reload to preserve pairing. Keep one Bridge copy active. YouTube Music tabs refresh automatically; use the refresh button or browser reload if needed. Website access remains optional and can be disabled in Bridge options.
 
 ## Troubleshooting
 
@@ -46,3 +46,7 @@ Desktop: Updates → Restart & install. Settings and pairing are preserved. Chro
 - Shortcut unavailable: check macOS Input Monitoring and restart when requested.
 - Automatic pause unavailable: select YouTube Music with Bridge, enable website detection and check exclusions.
 - Record a reproducible issue using Updates → Troubleshooting and export the local diagnostic report. [Windows guide](../desktop/DEBUG-WINDOWS.md).
+
+## New widget options
+
+A shortcut-opened widget stays compact on hover; click empty space or the arrow to expand. Pin remains active while dragging and stores the new position. In Activation, the optional pinned shortcut-only setting takes effect only after Pin + X; holding the shortcut restores normal activation. In Customize, Live music-video background uses Bridge 1.7.1 or newer and falls back to artwork when no compatible video is available.

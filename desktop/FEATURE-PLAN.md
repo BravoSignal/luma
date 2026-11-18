@@ -78,3 +78,22 @@ Confirmed by the user: ordinary A, Right Shift and Right Alt work on the physica
 - Optional blurred music-video background in the widget, with an artwork fallback.
 
 These are proposals, not features in release 1.7.6. Implementation has not started.
+
+## 1.8.0 local implementation — awaiting user validation
+
+- [x] Foreground-only per-app audio rules with sensitivity, opt-in level detection and existing fade/resume behavior.
+- [x] Native Mac process audio meter (14.2+) and Windows WASAPI session peaks.
+- [x] Optional blurred music-video background in compact and expanded widgets, with artwork fallback.
+- [x] On-demand local frame transport; no screen/tab/audio capture for video.
+- [ ] Real Resolve playback and Mac system-audio grant confirmed by user.
+- [ ] Actual YouTube Music video background confirmed by user.
+- [ ] Physical Windows verification.
+- [ ] Publication approved.
+
+## 1.8.1 local follow-up — awaiting user validation
+
+- [x] Replace background-tab JPEG timer with continuous video-only local streaming.
+- [x] Retain Pin during a drag and persist the new position on release.
+- [x] Optional pinned shortcut-only activation after explicit X dismissal (default off); pinning alone preserves normal activation.
+- [ ] User confirmation with actual background YouTube Music playback.
+- [ ] User approval to publish.

@@ -1,6 +1,6 @@
 {
   "name": "luma-music-widget",
-  "version": "1.7.6",
+  "version": "1.8.4",
   "description": "Your music. One moment away.",
   "author": "Luma",
   "private": true,
@@ -59,7 +59,10 @@
           "from": "extension",
           "to": "extension"
         }
-      ]
+      ],
+      "extendInfo": {
+        "NSAudioCaptureUsageDescription": "Luma measures sound from your selected foreground apps to pause music. Audio is not recorded or stored."
+      }
     },
     "win": {
       "target": [

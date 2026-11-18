@@ -1,0 +1,5 @@
+.DS_Store
+*.pem
+!desktop/app/update-public.pem
+.env
+.env.*

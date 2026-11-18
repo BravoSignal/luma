@@ -1,4 +1,4 @@
-const PROFILE_KEYS=['zoneEnabled','holdEnabled','binding','zones','pinnedPositions','displayOverrides','orientation','widgetWidth','widgetHeight','verticalWidth','verticalHeight','hideDelay','rearmDelay','activationDelay'];
+const PROFILE_KEYS=['pinnedShortcutOnly','zoneEnabled','holdEnabled','binding','zones','pinnedPositions','displayOverrides','orientation','widgetWidth','widgetHeight','verticalWidth','verticalHeight','hideDelay','rearmDelay','activationDelay'];
 function matchingProfile(config,appId){return config.profiles?.find(p=>p.enabled!==false&&p.appId===appId)||null;}
 function effectiveConfig(config,profileId){const profile=config.profiles?.find(p=>p.id===profileId);return profile?{...config,...profile.settings,profiles:config.profiles}:config;}
 function removeDisplayZone(config,displayId){return{...config,zones:(config.zones||[]).filter(z=>z.displayId!==displayId)};}
@@ -24,4 +24,12 @@ class ZoneEntryGate {
  reset(){this.id=null;this.since=null;}
  update(id,now,delay){if(id==null){this.reset();return false;}if(id!==this.id){this.id=id;this.since=now;}return now-this.since>=delay;}
 }
-module.exports={ZoneEntryGate,PROFILE_KEYS,matchingProfile,effectiveConfig,removeDisplayZone,exportedPreferences,importedPreferences,remapScreens,DismissalGate};
+// Only an explicit X dismissal latches a pinned widget until its shortcut is held.
+class PinnedDismissalGate {
+ constructor(){this.closed=new Set();}
+ key(scope,id){return JSON.stringify([scope??null,id]);}
+ dismiss(scope,id,config){if(config.pinnedShortcutOnly&&config.pinnedPositions?.[id])this.closed.add(this.key(scope,id));}
+ blocked(scope,id,config){const key=this.key(scope,id);if(!config.pinnedShortcutOnly||!config.pinnedPositions?.[id])this.closed.delete(key);return this.closed.has(key);}
+ reopen(scope,id){return this.closed.delete(this.key(scope,id));}
+}
+module.exports={PinnedDismissalGate,ZoneEntryGate,PROFILE_KEYS,matchingProfile,effectiveConfig,removeDisplayZone,exportedPreferences,importedPreferences,remapScreens,DismissalGate};
